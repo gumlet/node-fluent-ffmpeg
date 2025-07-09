@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [20, 22]
+        node: [22]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -51,4 +51,4 @@ jobs:
         uses: coverallsapp/github-action@v2
         with:
           parallel-finished: true
-          carryforward: "linux-node-20,linux-node-22"
+          carryforward: "linux-node-22"
