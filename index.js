@@ -1,1 +1,1 @@
-module.exports = require('./lib/fluent-ffmpeg');
+export { default } from './lib/fluent-ffmpeg.js';

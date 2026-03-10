@@ -2,7 +2,7 @@
 /*global describe,it*/
 
 
-var Ffmpeg = require('../index');
+import Ffmpeg from '../index.js';
 
 var aliases = {
   audio: {

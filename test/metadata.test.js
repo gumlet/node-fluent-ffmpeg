@@ -2,13 +2,18 @@
 /*global describe,it,before*/
 
 
-var Ffmpeg = require('../index'),
-  path = require('node:path'),
-  fs = require('node:fs'),
-  Readable = require('node:stream').Readable,
-  assert = require('node:assert'),
-  exec = require('node:child_process').exec,
-  testhelper = require('./helpers');
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+import Ffmpeg from '../index.js';
+import fs from 'node:fs';
+import { Readable } from 'node:stream';
+import { strict as assert } from 'node:assert';
+import { exec } from 'node:child_process';
+import testhelper from './helpers.js';
 
 
 describe('Metadata', () => {

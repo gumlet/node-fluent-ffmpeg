@@ -2,13 +2,14 @@
 /*global describe,it,before*/
 
 
-var Ffmpeg = require('../index'),
-  utils = require('../lib/utils'),
-  path = require('node:path'),
-  fs = require('node:fs'),
-  assert = require('node:assert'),
-  exec = require('node:child_process').exec,
-  testhelper = require('./helpers');
+import Ffmpeg from '../index.js';
+import utils from '../lib/utils.js';
+import path from 'node:path';
+import fs from 'node:fs';
+import { strict as assert } from 'node:assert';
+import { exec } from 'node:child_process';
+import testhelper from './helpers.js';
+const __dirname = import.meta.dirname;
 
 Ffmpeg.prototype._test_getArgs = function(callback) {
   var args;
@@ -108,7 +109,7 @@ describe('Command', () => {
       (() => {
         new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
           .usingPreset('NOTFOUND');
-      }).should.throw(/NOTFOUND could not be loaded/);
+      }).should.throw(/preset could not be loaded/);
     });
 
     it('should throw an exception when a preset has no load function', () => {

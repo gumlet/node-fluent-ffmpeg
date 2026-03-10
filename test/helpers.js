@@ -1,13 +1,13 @@
 /*jshint node:true*/
 
 
-var TestHelpers;
+import { platform } from 'node:os';
 
-exports = module.exports = TestHelpers = {
+const TestHelpers = {
   getFfmpegCheck: () => {
-    var platform = require('os').platform();
+    const plat = platform();
 
-    if (!platform.match(/win(32|64)/)) {
+    if (!plat.match(/win(32|64)/)) {
       // linux/mac, use which
       return 'which ffmpeg';
     } else {
@@ -78,3 +78,5 @@ exports = module.exports = TestHelpers = {
     }
   }
 };
+
+export default TestHelpers;

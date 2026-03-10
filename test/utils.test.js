@@ -2,7 +2,7 @@
 /*global describe,it*/
 
 
-var utils = require('../lib/utils');
+import utils from '../lib/utils.js';
 
 describe('Utilities', () => {
 

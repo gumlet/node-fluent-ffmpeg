@@ -2,21 +2,25 @@
 /*global describe,it,before,after,beforeEach,afterEach*/
 
 
-var FfmpegCommand = require('../index'),
-  path = require('node:path'),
-  fs = require('node:fs'),
-  assert = require('node:assert'),
-  os = require('node:os').platform(),
-  exec = require('node:child_process').exec,
-  spawn = require('node:child_process').spawn,
-  async = require('async'),
-  stream = require('node:stream'),
-  testhelper = require('./helpers');
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+import FfmpegCommand from '../index.js';
+import fs from 'node:fs';
+import { strict as assert } from 'node:assert';
+import { platform } from 'node:os';
+import { exec, spawn } from 'node:child_process';
+import async from 'async';
+import { Readable, Writable, PassThrough} from 'node:stream';
+import testhelper from './helpers.js';
 
 
-var testHTTP = 'http://127.0.0.1:8090/test.mpg';
-var testRTSP = 'rtsp://127.0.0.1:5540/test-rtp.mpg';
-var testRTPOut = 'rtp://127.0.0.1:5540/input.mpg';
+const testHTTP = 'http://127.0.0.1:8090/test.mpg';
+const testRTSP = 'rtsp://127.0.0.1:5540/test-rtp.mpg';
+const testRTPOut = 'rtp://127.0.0.1:5540/input.mpg';
 
 
 /*****************************************************************
@@ -181,7 +185,7 @@ describe('Processor', () => {
 
   describe('Process controls', () => {
     // Skip all niceness tests on windows
-    var skipNiceness = os.match(/win(32|64)/);
+    var skipNiceness = platform().match(/win(32|64)/);
 
     var skipRenice = false;
 
@@ -780,7 +784,7 @@ describe('Processor', () => {
       var testFile = path.join(__dirname, 'assets', 'testConvertFromStream.avi')
 
 		const readError = new Error('Read Error')
-      const instream = new (require('stream').Readable)({
+      const instream = new Readable({
         read() {
   		    process.nextTick(() => this.emit('error', readError))
 		  }
@@ -948,7 +952,7 @@ describe('Processor', () => {
 
       var passthrough = command.writeToStream({end: true});
 
-      passthrough.should.instanceof(stream.PassThrough);
+      passthrough.should.instanceof(PassThrough);
       passthrough.pipe(outstream);
     });
 
@@ -961,7 +965,7 @@ describe('Processor', () => {
     it('should pass output stream errors through to error handler', function(done) {
 
 		const writeError = new Error('Write Error')
-      const outstream = new (require('stream').Writable)({
+      const outstream = new Writable({
         write(chunk, encoding, callback) {
           callback(writeError)
 		  }
