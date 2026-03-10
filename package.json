@@ -16,6 +16,10 @@
       "email": "support@gumlet.com"
     }
   ],
+  "files": [
+    "lib/**/*",
+    "index.js"
+  ],
   "license": "MIT",
   "bugs": {
     "mail": "support@gumlet.com",
