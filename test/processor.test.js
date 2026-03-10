@@ -200,7 +200,7 @@ describe('Processor', () => {
       var testFile = path.join(__dirname, 'assets', 'testProcessRenice.avi');
       this.files.push(testFile);
 
-      var ffmpegJob = this.getCommand({ source: this.testfilebig, logger: testhelper.logger, timeout: 2 })
+      var ffmpegJob = this.getCommand({ source: this.testfilebig, logger: testhelper.logger, timeout: 0.5 })
           .usingPreset('divx');
 
       var startCalled = false;
@@ -209,17 +209,18 @@ describe('Processor', () => {
       ffmpegJob
           .on('start', () => {
             startCalled = true;
+            const pid = ffmpegJob.ffmpegProc.pid;
             setTimeout(() => {
               ffmpegJob.renice(5);
 
               setTimeout(() => {
-                exec('ps -p ' + ffmpegJob.ffmpegProc.pid + ' -o ni=', (err, stdout) => {
+                exec(`ps -p ${pid} -o ni=`, (err, stdout) => {
                   assert.ok(!err);
                   parseInt(stdout, 10).should.equal(5);
                   reniced = true;
                 });
-              }, 500);
-            }, 500);
+              }, 100);
+            }, 100);
 
             ffmpegJob.ffmpegProc.on('exit', () => {
               reniced.should.equal(true);
@@ -258,7 +259,7 @@ describe('Processor', () => {
       var testFile = path.join(__dirname, 'assets', 'testProcessKillTimeout.avi');
       this.files.push(testFile);
 
-      var command = this.getCommand({ source: this.testfilebig, logger: testhelper.logger, timeout: 1});
+      var command = this.getCommand({ source: this.testfilebig, logger: testhelper.logger, timeout: 0.1});
 
       command
           .usingPreset('divx')
@@ -281,7 +282,7 @@ describe('Processor', () => {
 
     it('should not keep node process running on completion', function(done) {
       var script = `
-        var ffmpeg = require('.');
+        import ffmpeg from './index.js'
         ffmpeg('${this.testfilebig}', { timeout: 60 })
           .addOption('-t', 1)
           .addOption('-f', 'null')
@@ -1214,7 +1215,7 @@ describe('Processor', () => {
         .on('start', () => {
           setTimeout(() => {
             command.kill('SIGKILL');
-          }, 1000);
+          }, 200);
         })
         .on('error', (err) => {
           err.message.should.match(/ffmpeg was killed with signal SIGKILL/);
