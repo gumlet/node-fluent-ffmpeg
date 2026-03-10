@@ -1,7 +1,7 @@
 # Fluent ffmpeg-API for node.js
 
-[![Coverage Status](https://coveralls.io/repos/github/fluent-ffmpeg/node-fluent-ffmpeg/badge.svg?branch=master)](https://coveralls.io/github/fluent-ffmpeg/node-fluent-ffmpeg?branch=master)
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Ffluent-ffmpeg%2Fnode-fluent-ffmpeg.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Ffluent-ffmpeg%2Fnode-fluent-ffmpeg?ref=badge_shield)
+![NPM Version](https://img.shields.io/npm/v/%40gumlet%2Ffluent-ffmpeg)
+[![Coverage Status](https://coveralls.io/repos/github/gumlet/node-fluent-ffmpeg/badge.svg?branch=master)](https://coveralls.io/github/gumlet/node-fluent-ffmpeg?branch=master)
 
 ## About
 
