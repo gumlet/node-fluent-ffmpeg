@@ -4,10 +4,10 @@
 
 var Ffmpeg = require('../index'),
   utils = require('../lib/utils'),
-  path = require('path'),
-  fs = require('fs'),
-  assert = require('assert'),
-  exec = require('child_process').exec,
+  path = require('node:path'),
+  fs = require('node:fs'),
+  assert = require('node:assert'),
+  exec = require('node:child_process').exec,
   testhelper = require('./helpers');
 
 Ffmpeg.prototype._test_getArgs = function(callback) {

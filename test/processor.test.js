@@ -3,14 +3,14 @@
 
 
 var FfmpegCommand = require('../index'),
-  path = require('path'),
-  fs = require('fs'),
-  assert = require('assert'),
-  os = require('os').platform(),
-  exec = require('child_process').exec,
-  spawn = require('child_process').spawn,
+  path = require('node:path'),
+  fs = require('node:fs'),
+  assert = require('node:assert'),
+  os = require('node:os').platform(),
+  exec = require('node:child_process').exec,
+  spawn = require('node:child_process').spawn,
   async = require('async'),
-  stream = require('stream'),
+  stream = require('node:stream'),
   testhelper = require('./helpers');
 
 

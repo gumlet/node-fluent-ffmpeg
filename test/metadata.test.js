@@ -3,11 +3,11 @@
 
 
 var Ffmpeg = require('../index'),
-  path = require('path'),
-  fs = require('fs'),
-  Readable = require('stream').Readable,
-  assert = require('assert'),
-  exec = require('child_process').exec,
+  path = require('node:path'),
+  fs = require('node:fs'),
+  Readable = require('node:stream').Readable,
+  assert = require('node:assert'),
+  exec = require('node:child_process').exec,
   testhelper = require('./helpers');
 
 

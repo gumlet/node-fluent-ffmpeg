@@ -3,13 +3,13 @@
 
 
 var Ffmpeg = require('../index'),
-  path = require('path'),
-  assert = require('assert'),
+  path = require('node:path'),
+  assert = require('node:assert'),
   testhelper = require('./helpers'),
   async = require('async');
 
 // delimiter fallback for node 0.8
-var PATH_DELIMITER = path.delimiter || (require('os').platform().match(/win(32|64)/) ? ';' : ':');
+var PATH_DELIMITER = path.delimiter || (require('node:os').platform().match(/win(32|64)/) ? ';' : ':');
 
 
 describe('Capabilities', () => {
