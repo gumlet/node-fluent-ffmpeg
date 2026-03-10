@@ -81,8 +81,8 @@ describe('Processor', () => {
             this.testfileaudio2,
             this.testfileaudio3
           ], (file, cb) => {
-            fs.exists(file, (exists) => {
-              cb(exists ? null : new Error('test video file does not exist, check path (' + file + ')'));
+            fs.access(file, fs.constants.F_OK, (err) => {
+              cb(!err ? null : new Error(`test video file does not exist, check path (${file})`));
             });
           },
           done
@@ -145,8 +145,8 @@ describe('Processor', () => {
         // Ensure all created files are removed
         (cb) => {
           async.each(this.files, (file, cb) => {
-            fs.exists(file, (exists) => {
-              if (exists) {
+            fs.access(file, fs.constants.F_OK, (err) => {
+              if (!err) {
                 fs.unlink(file, cb);
               } else {
                 if (this.outputs.length) {
@@ -163,8 +163,8 @@ describe('Processor', () => {
         // Ensure all created dirs are removed
         (cb) => {
           async.each(this.dirs, (dir, cb) => {
-            fs.exists(dir, (exists) => {
-              if (exists) {
+            fs.access(dir, fs.constants.F_OK, (err) => {
+              if (!err) {
                 fs.rmdir(dir, cb);
               } else {
                 if (this.outputs.length) {
@@ -696,8 +696,8 @@ describe('Processor', () => {
           assert.ok(!err);
         })
         .on('end', () => {
-          fs.exists(testFile, (exist) => {
-            exist.should.equal(true);
+          fs.access(testFile, fs.constants.F_OK, (err) => {
+            assert.ok(!err);
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, (err, stats) => {
               assert.ok(!err && stats);
@@ -739,8 +739,8 @@ describe('Processor', () => {
           assert.ok(!err);
         })
         .on('end', () => {
-          fs.exists(testFile, (exist) => {
-            exist.should.equal(true);
+          fs.access(testFile, fs.constants.F_OK, (err) => {
+            assert.ok(!err);
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, (err, stats) => {
               assert.ok(!err && stats);
@@ -766,8 +766,8 @@ describe('Processor', () => {
           assert.ok(!err);
         })
         .on('end', () => {
-          fs.exists(testFile, (exist) => {
-            exist.should.equal(true);
+          fs.access(testFile, fs.constants.F_OK, (err) => {
+            assert.ok(!err);
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, (err, stats) => {
               assert.ok(!err && stats);
@@ -800,8 +800,8 @@ describe('Processor', () => {
           .on('start', () => {
           	startCalled = true
             command.ffmpegProc.on('exit', () => {
-            	fs.exists(testFile, (exists) => {
-            		exists.should.be.false()
+            	fs.access(testFile, fs.constants.F_OK, (err) => {
+            		assert.ok(err);
 						done()
             	})
             })
@@ -835,8 +835,8 @@ describe('Processor', () => {
           assert.ok(!err);
         })
         .on('end', () => {
-          fs.exists(testFile, (exist) => {
-            exist.should.equal(true);
+          fs.access(testFile, fs.constants.F_OK, (err) => {
+            assert.ok(!err);
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, (err, stats) => {
               assert.ok(!err && stats);
@@ -866,12 +866,12 @@ describe('Processor', () => {
           assert.ok(!err);
         })
         .on('end', (stdout, stderr) => {
-          fs.exists(testFile, (exist) => {
-            if (!exist) {
+          fs.access(testFile, fs.constants.F_OK, (err) => {
+            if (err) {
               console.log(stderr);
             }
 
-            exist.should.equal(true);
+            assert.ok(!err);
 
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, (err, stats) => {
@@ -899,13 +899,13 @@ describe('Processor', () => {
           testhelper.logError(err, stdout, stderr);
           assert.ok(!err);
         })
-        .on('end', (stdout,stderr) => {
-          fs.exists(testFile, (exist) => {
-            if (!exist) {
+        .on('end', (stdout, stderr) => {
+          fs.access(testFile, fs.constants.F_OK, (err) => {
+            if (err) {
               console.log(stderr);
             }
 
-            exist.should.equal(true);
+            assert.ok(!err);
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, (err, stats) => {
               assert.ok(!err && stats);
@@ -933,12 +933,12 @@ describe('Processor', () => {
           assert.ok(!err);
         })
         .on('end', (stdout, stderr) => {
-          fs.exists(testFile, (exist) => {
-            if (!exist) {
+          fs.access(testFile, fs.constants.F_OK, (err) => {
+            if (err) {
               console.log(stderr);
             }
 
-            exist.should.equal(true);
+            assert.ok(!err);
 
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, (err, stats) => {
@@ -1031,8 +1031,8 @@ describe('Processor', () => {
           async.map(
             [testFile1, testFile2, testFile3],
             (file, cb) => {
-              fs.exists(file, (exist) => {
-                exist.should.equal(true);
+              fs.access(file, fs.constants.F_OK, (err) => {
+                assert.ok(!err);
 
                 // check filesize to make sure conversion actually worked
                 fs.stat(file, (err, stats) => {
@@ -1068,8 +1068,8 @@ describe('Processor', () => {
           assert.ok(!err);
         })
         .on('end', () => {
-          fs.exists(testFile, (exist) => {
-            exist.should.equal(true);
+          fs.access(testFile, fs.constants.F_OK, (err) => {
+            assert.ok(!err);
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, (err, stats) => {
               assert.ok(!err && stats);
@@ -1143,8 +1143,8 @@ describe('Processor', () => {
           assert.ok(!err);
         })
         .on('end', () => {
-          fs.exists(testFile, (exist) => {
-            exist.should.equal(true);
+          fs.access(testFile, fs.constants.F_OK, (err) => {
+            assert.ok(!err);
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, (err, stats) => {
               assert.ok(!err && stats);
@@ -1171,8 +1171,8 @@ describe('Processor', () => {
           assert.ok(!err);
         })
         .on('end', () => {
-          fs.exists(testFile, (exist) => {
-            exist.should.equal(true);
+          fs.access(testFile, fs.constants.F_OK, (err) => {
+            assert.ok(!err);
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, (err, stats) => {
               assert.ok(!err && stats);

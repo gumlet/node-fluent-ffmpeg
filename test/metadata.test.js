@@ -22,11 +22,11 @@ describe('Metadata', () => {
     exec(testhelper.getFfmpegCheck(), (err) => {
       if (!err) {
         // check if file exists
-        fs.exists(this.testfile, (exists) => {
-          if (exists) {
+        fs.access(this.testfile, fs.constants.F_OK, (err) => {
+          if (!err) {
             done();
           } else {
-            done(new Error('test video file does not exist, check path (' + this.testfile + ')'));
+            done(new Error(`test video file does not exist, check path (${this.testfile})`));
           }
         });
       } else {
