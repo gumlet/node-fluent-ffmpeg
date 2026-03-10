@@ -23,10 +23,10 @@ var proc = ffmpeg('/path/to/your_movie.avi')
   // set output format to force
   .format('avi')
   // setup event handlers
-  .on('end', function() {
+  .on('end', () => {
     console.log('file has been converted succesfully');
   })
-  .on('error', function(err) {
+  .on('error', (err) => {
     console.log('an error happened: ' + err.message);
   })
   // save to file

@@ -23,6 +23,7 @@
   },
   "repository": "git@github.com:gumlet/node-fluent-ffmpeg.git",
   "devDependencies": {
+    "@biomejs/biome": "^2.4.6",
     "jsdoc": "^4.0.0",
     "mocha": "^10.0.0",
     "nyc": "^15.1.0",

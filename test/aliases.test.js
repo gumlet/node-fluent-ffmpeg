@@ -1,6 +1,6 @@
 /*jshint node:true*/
 /*global describe,it*/
-'use strict';
+
 
 var Ffmpeg = require('../index');
 
@@ -66,13 +66,13 @@ var aliases = {
   }
 };
 
-describe('Method aliases', function() {
-  Object.keys(aliases).forEach(function(category) {
-    describe(category + ' methods', function() {
-      Object.keys(aliases[category]).forEach(function(method) {
-        describe('FfmpegCommand#' + method, function() {
-          aliases[category][method].forEach(function(alias) {
-            it('should have a \'' + alias + '\' alias', function() {
+describe('Method aliases', () => {
+  Object.keys(aliases).forEach((category) => {
+    describe(category + ' methods', () => {
+      Object.keys(aliases[category]).forEach((method) => {
+        describe('FfmpegCommand#' + method, () => {
+          aliases[category][method].forEach((alias) => {
+            it('should have a \'' + alias + '\' alias', () => {
               var ff = new Ffmpeg();
 
               (typeof ff[method]).should.equal('function');

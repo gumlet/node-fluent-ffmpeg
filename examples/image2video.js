@@ -7,10 +7,10 @@ var proc = ffmpeg('/path/to/your_image.jpg')
   // using 25 fps
   .fps(25)
   // setup event handlers
-  .on('end', function() {
+  .on('end', () => {
     console.log('file has been converted succesfully');
   })
-  .on('error', function(err) {
+  .on('error', (err) => {
     console.log('an error happened: ' + err.message);
   })
   // save to file

@@ -1,4 +1,4 @@
-exports.load = function(ffmpeg) {
+exports.load = (ffmpeg) => {
   ffmpeg
     .toFormat('m4v')
     .withVideoBitrate('512k')

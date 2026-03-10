@@ -1,6 +1,6 @@
 /*jshint node:true*/
 /*global describe,it,before*/
-'use strict';
+
 
 var Ffmpeg = require('../index'),
   path = require('path'),
@@ -11,20 +11,18 @@ var Ffmpeg = require('../index'),
   testhelper = require('./helpers');
 
 
-describe('Metadata', function() {
+describe('Metadata', () => {
   before(function(done) {
     // check for ffmpeg installation
     this.testfile = path.join(__dirname, 'assets', 'testvideo-43.avi');
-
-    var self = this;
-    exec(testhelper.getFfmpegCheck(), function(err) {
+    exec(testhelper.getFfmpegCheck(), (err) => {
       if (!err) {
         // check if file exists
-        fs.exists(self.testfile, function(exists) {
+        fs.exists(this.testfile, (exists) => {
           if (exists) {
             done();
           } else {
-            done(new Error('test video file does not exist, check path (' + self.testfile + ')'));
+            done(new Error('test video file does not exist, check path (' + this.testfile + ')'));
           }
         });
       } else {
@@ -33,13 +31,13 @@ describe('Metadata', function() {
     });
   });
 
-  it('should provide an ffprobe entry point', function(done) {
+  it('should provide an ffprobe entry point', (done) => {
     (typeof Ffmpeg.ffprobe).should.equal('function');
     done();
   });
 
   it('should return ffprobe data as an object', function(done) {
-    Ffmpeg.ffprobe(this.testfile, function(err, data) {
+    Ffmpeg.ffprobe(this.testfile, (err, data) => {
       testhelper.logError(err);
       assert.ok(!err);
 
@@ -49,7 +47,7 @@ describe('Metadata', function() {
   });
 
   it('should provide ffprobe format information', function(done) {
-    Ffmpeg.ffprobe(this.testfile, function(err, data) {
+    Ffmpeg.ffprobe(this.testfile, (err, data) => {
       testhelper.logError(err);
       assert.ok(!err);
 
@@ -63,7 +61,7 @@ describe('Metadata', function() {
   });
 
   it('should provide ffprobe stream information', function(done) {
-    Ffmpeg.ffprobe(this.testfile, function(err, data) {
+    Ffmpeg.ffprobe(this.testfile, (err, data) => {
       testhelper.logError(err);
       assert.ok(!err);
 
@@ -79,7 +77,7 @@ describe('Metadata', function() {
   });
 
   it('should provide ffprobe stream information with units', function(done) {
-    Ffmpeg.ffprobe(this.testfile, ['-unit'], function(err, data) {
+    Ffmpeg.ffprobe(this.testfile, ['-unit'], (err, data) => {
       testhelper.logError(err);
       assert.ok(!err);
 
@@ -91,8 +89,8 @@ describe('Metadata', function() {
     });
   });
 
-  it('should return ffprobe errors', function(done) {
-    Ffmpeg.ffprobe('/path/to/missing/file', function(err) {
+  it('should return ffprobe errors', (done) => {
+    Ffmpeg.ffprobe('/path/to/missing/file', (err) => {
       assert.ok(!!err);
       done();
     });
@@ -100,7 +98,7 @@ describe('Metadata', function() {
 
   it('should enable calling ffprobe on a command with an input file', function(done) {
     new Ffmpeg({ source: this.testfile })
-      .ffprobe(function(err, data) {
+      .ffprobe((err, data) => {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -114,8 +112,8 @@ describe('Metadata', function() {
       });
   });
 
-  it('should fail calling ffprobe on a command without input', function(done) {
-    new Ffmpeg().ffprobe(function(err) {
+  it('should fail calling ffprobe on a command without input', (done) => {
+    new Ffmpeg().ffprobe((err) => {
       assert.ok(!!err);
       err.message.should.match(/No input specified/);
       done();
@@ -127,7 +125,7 @@ describe('Metadata', function() {
 
     new Ffmpeg()
       .addInput(stream)
-      .ffprobe(function(err, data) {
+      .ffprobe((err, data) => {
         assert.ok(!err);
         data.streams.length.should.equal(1);
         data.format.filename.should.equal('pipe:0');

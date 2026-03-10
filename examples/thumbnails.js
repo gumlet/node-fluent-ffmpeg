@@ -2,13 +2,13 @@ var ffmpeg = require('../index');
 
 var proc = ffmpeg('/path/to/your_movie.avi')
   // setup event handlers
-  .on('filenames', function(filenames) {
+  .on('filenames', (filenames) => {
     console.log('screenshots are ' + filenames.join(', '));
   })
-  .on('end', function() {
+  .on('end', () => {
     console.log('screenshots were saved');
   })
-  .on('error', function(err) {
+  .on('error', (err) => {
     console.log('an error happened: ' + err.message);
   })
   // take 2 screenshots at predefined timemarks and size

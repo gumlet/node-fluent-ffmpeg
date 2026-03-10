@@ -1,6 +1,6 @@
 /*jshint node:true*/
 /*global describe,it,before*/
-'use strict';
+
 
 var Ffmpeg = require('../index'),
   utils = require('../lib/utils'),
@@ -28,21 +28,19 @@ Ffmpeg.prototype._test_getSizeFilters = function() {
 };
 
 
-describe('Command', function() {
+describe('Command', () => {
   before(function(done) {
     // check for ffmpeg installation
     this.testfile = path.join(__dirname, 'assets', 'testvideo-43.avi');
     this.testfilewide = path.join(__dirname, 'assets', 'testvideo-169.avi');
-
-    var self = this;
-    exec(testhelper.getFfmpegCheck(), function(err) {
+    exec(testhelper.getFfmpegCheck(), (err) => {
       if (!err) {
         // check if file exists
-        fs.exists(self.testfile, function(exists) {
+        fs.exists(this.testfile, (exists) => {
           if (exists) {
             done();
           } else {
-            done(new Error('test video file does not exist, check path (' + self.testfile + ')'));
+            done(new Error('test video file does not exist, check path (' + this.testfile + ')'));
           }
         });
       } else {
@@ -51,17 +49,17 @@ describe('Command', function() {
     });
   });
 
-  describe('Constructor', function() {
-    it('should enable calling the constructor without new', function() {
+  describe('Constructor', () => {
+    it('should enable calling the constructor without new', () => {
       (Ffmpeg()).should.instanceof(Ffmpeg);
     });
   });
 
-  describe('usingPreset', function() {
+  describe('usingPreset', () => {
     it('should properly generate the command for the requested preset', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .usingPreset('podcast')
-        ._test_getArgs(function(args, err) {
+        ._test_getArgs((args, err) => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -73,7 +71,7 @@ describe('Command', function() {
     it('should properly generate the command for the requested preset in custom folder', function(done) {
       new Ffmpeg({ source: this.testfile, nolog: true, preset: path.join(__dirname, 'assets', 'presets') })
         .usingPreset('custompreset')
-        ._test_getArgs(function(args) {
+        ._test_getArgs((args) => {
           args.length.should.equal(42);
 
         done();
@@ -93,7 +91,7 @@ describe('Command', function() {
 
       cmd
         .usingPreset(presetFunc)
-        ._test_getArgs(function(args, err) {
+        ._test_getArgs((args, err) => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -106,26 +104,25 @@ describe('Command', function() {
     });
 
     it('should throw an exception when a preset is not found', function() {
-      var self = this;
 
-      (function() {
-        new Ffmpeg({ source: self.testfile, logger: testhelper.logger })
+      (() => {
+        new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
           .usingPreset('NOTFOUND');
       }).should.throw(/NOTFOUND could not be loaded/);
     });
 
-    it('should throw an exception when a preset has no load function', function() {
-      (function() {
+    it('should throw an exception when a preset has no load function', () => {
+      (() => {
         new Ffmpeg({ presets: '../../lib' }).usingPreset('utils');
       }).should.throw(/has no load\(\) function/);
     });
   });
 
-  describe('withNoVideo', function() {
+  describe('withNoVideo', () => {
     it('should apply the skip video argument', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withNoVideo()
-        ._test_getArgs(function(args, err) {
+        ._test_getArgs((args, err) => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -138,7 +135,7 @@ describe('Command', function() {
         .withSize('320x?')
         .withNoVideo()
         .withAudioBitrate('256k')
-        ._test_getArgs(function(args, err) {
+        ._test_getArgs((args, err) => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -150,11 +147,11 @@ describe('Command', function() {
     });
   });
 
-  describe('withNoAudio', function() {
+  describe('withNoAudio', () => {
     it('should apply the skip audio argument', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withNoAudio()
-        ._test_getArgs(function(args, err) {
+        ._test_getArgs((args, err) => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -167,7 +164,7 @@ describe('Command', function() {
         .withAudioChannels(2)
         .withNoAudio()
         .withSize('320x?')
-        ._test_getArgs(function(args, err) {
+        ._test_getArgs((args, err) => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -179,11 +176,11 @@ describe('Command', function() {
     });
   });
 
-  describe('withVideoBitrate', function() {
+  describe('withVideoBitrate', () => {
     it('should apply default bitrate argument by default', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withVideoBitrate('256k')
-        ._test_getArgs(function(args, err) {
+        ._test_getArgs((args, err) => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -194,7 +191,7 @@ describe('Command', function() {
     it('should apply additional bitrate arguments for constant bitrate', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withVideoBitrate('256k', true)
-        ._test_getArgs(function(args, err) {
+        ._test_getArgs((args, err) => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -207,10 +204,10 @@ describe('Command', function() {
     });
   });
 
-  describe('withMultiFile', function() {
-    it('should allow image2 multi-file input format', function(done) {
+  describe('withMultiFile', () => {
+    it('should allow image2 multi-file input format', (done) => {
       new Ffmpeg({ source: 'image-%05d.png', logger: testhelper.logger })
-        ._test_getArgs(function(args, err) {
+        ._test_getArgs((args, err) => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -221,11 +218,11 @@ describe('Command', function() {
     });
   });
 
-  describe('withFps', function() {
+  describe('withFps', () => {
     it('should apply the rate argument', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withFps(27.77)
-        ._test_getArgs(function(args, err) {
+        ._test_getArgs((args, err) => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -236,11 +233,11 @@ describe('Command', function() {
     });
   });
 
-  describe('withInputFPS', function() {
+  describe('withInputFPS', () => {
     it('should apply the rate argument', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withInputFPS(27.77)
-        ._test_getArgs(function(args, err) {
+        ._test_getArgs((args, err) => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -251,11 +248,11 @@ describe('Command', function() {
     });
   });
 
-  describe('native', function() {
+  describe('native', () => {
     it('should apply the native framerate argument', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .native()
-        ._test_getArgs(function(args, err) {
+        ._test_getArgs((args, err) => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -265,11 +262,11 @@ describe('Command', function() {
     });
   });
 
-  describe('addingAdditionalInput', function() {
+  describe('addingAdditionalInput', () => {
     it('should allow for additional inputs', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .addInput('soundtrack.mp3')
-        ._test_getArgs(function(args, err) {
+        ._test_getArgs((args, err) => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -279,8 +276,8 @@ describe('Command', function() {
         });
     });
 
-    it('should fail to add invalid inputs', function() {
-      (function() {
+    it('should fail to add invalid inputs', () => {
+      (() => {
         new Ffmpeg().addInput({});
       }).should.throw(/Invalid input/);
     });
@@ -290,39 +287,39 @@ describe('Command', function() {
       var stream2 = fs.createReadStream(this.testfilewide);
       var command = new Ffmpeg().addInput(stream1);
 
-      (function() {
+      (() => {
         command.addInput(stream2);
       }).should.throw(/Only one input stream is supported/);
     });
 
-    it('should fail on input-related options when no input was added', function() {
-      (function() {
+    it('should fail on input-related options when no input was added', () => {
+      (() => {
         new Ffmpeg().inputFormat('avi');
       }).should.throw(/No input specified/);
 
-      (function() {
+      (() => {
         new Ffmpeg().inputFps(24);
       }).should.throw(/No input specified/);
 
-      (function() {
+      (() => {
         new Ffmpeg().seekInput(1);
       }).should.throw(/No input specified/);
 
-      (function() {
+      (() => {
         new Ffmpeg().loop();
       }).should.throw(/No input specified/);
 
-      (function() {
+      (() => {
         new Ffmpeg().inputOptions('-anoption');
       }).should.throw(/No input specified/);
     });
   });
 
-  describe('withVideoCodec', function() {
+  describe('withVideoCodec', () => {
     it('should apply the video codec argument', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withVideoCodec('libx264')
-        ._test_getArgs(function(args, err) {
+        ._test_getArgs((args, err) => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -333,13 +330,13 @@ describe('Command', function() {
     });
   });
 
-  describe('withVideoFilter', function() {
+  describe('withVideoFilter', () => {
     it('should apply the video filter argument', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withVideoFilter('scale=123:456')
         .withVideoFilter('pad=1230:4560:100:100:yellow')
         .withVideoFilter('multiple=1', 'filters=2')
-        ._test_getArgs(function(args, err) {
+        ._test_getArgs((args, err) => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -352,7 +349,7 @@ describe('Command', function() {
     it('should accept filter arrays', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withVideoFilter(['multiple=1', 'filters=2'])
-        ._test_getArgs(function(args, err) {
+        ._test_getArgs((args, err) => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -381,7 +378,7 @@ describe('Command', function() {
             }
           }
         )
-        ._test_getArgs(function(args, err) {
+        ._test_getArgs((args, err) => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -392,11 +389,11 @@ describe('Command', function() {
     });
   });
 
-  describe('withAudioBitrate', function() {
+  describe('withAudioBitrate', () => {
     it('should apply the audio bitrate argument', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withAudioBitrate(256)
-        ._test_getArgs(function(args, err) {
+        ._test_getArgs((args, err) => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -407,11 +404,11 @@ describe('Command', function() {
     });
   });
 
-  describe('loop', function() {
+  describe('loop', () => {
     it('should add the -loop 1 argument', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .loop()
-        ._test_getArgs(function(args, err) {
+        ._test_getArgs((args, err) => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -426,7 +423,7 @@ describe('Command', function() {
     it('should add the -loop 1 and a time argument (seconds)', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .loop(120)
-        ._test_getArgs(function(args, err) {
+        ._test_getArgs((args, err) => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -444,7 +441,7 @@ describe('Command', function() {
     it('should add the -loop 1 and a time argument (timemark)', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .loop('00:06:46.81')
-        ._test_getArgs(function(args, err) {
+        ._test_getArgs((args, err) => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -460,11 +457,11 @@ describe('Command', function() {
     });
   });
 
-  describe('takeFrames', function() {
+  describe('takeFrames', () => {
     it('should add the -vframes argument', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .takeFrames(250)
-        ._test_getArgs(function(args, err) {
+        ._test_getArgs((args, err) => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -475,11 +472,11 @@ describe('Command', function() {
     });
   });
 
-  describe('withAudioCodec', function() {
+  describe('withAudioCodec', () => {
     it('should apply the audio codec argument', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withAudioCodec('mp3')
-        ._test_getArgs(function(args, err) {
+        ._test_getArgs((args, err) => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -490,13 +487,13 @@ describe('Command', function() {
     });
   });
 
-  describe('withAudioFilter', function() {
+  describe('withAudioFilter', () => {
     it('should apply the audio filter argument', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withAudioFilter('silencedetect=n=-50dB:d=5')
         .withAudioFilter('volume=0.5')
         .withAudioFilter('multiple=1', 'filters=2')
-        ._test_getArgs(function(args, err) {
+        ._test_getArgs((args, err) => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -509,7 +506,7 @@ describe('Command', function() {
     it('should accept filter arrays', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withAudioFilter(['multiple=1', 'filters=2'])
-        ._test_getArgs(function(args, err) {
+        ._test_getArgs((args, err) => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -538,7 +535,7 @@ describe('Command', function() {
             }
           }
         )
-        ._test_getArgs(function(args, err) {
+        ._test_getArgs((args, err) => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -549,11 +546,11 @@ describe('Command', function() {
     });
   });
 
-  describe('withAudioChannels', function() {
+  describe('withAudioChannels', () => {
     it('should apply the audio channels argument', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withAudioChannels(1)
-        ._test_getArgs(function(args, err) {
+        ._test_getArgs((args, err) => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -564,11 +561,11 @@ describe('Command', function() {
     });
   });
 
-  describe('withAudioFrequency', function() {
+  describe('withAudioFrequency', () => {
     it('should apply the audio frequency argument', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withAudioFrequency(22500)
-        ._test_getArgs(function(args, err) {
+        ._test_getArgs((args, err) => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -579,11 +576,11 @@ describe('Command', function() {
     });
   });
 
-  describe('withAudioQuality', function() {
+  describe('withAudioQuality', () => {
     it('should apply the audio quality argument', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withAudioQuality(5)
-        ._test_getArgs(function(args, err) {
+        ._test_getArgs((args, err) => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -594,11 +591,11 @@ describe('Command', function() {
     });
   });
 
-  describe('setStartTime', function() {
+  describe('setStartTime', () => {
     it('should apply the start time offset argument', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .setStartTime('00:00:10')
-        ._test_getArgs(function(args, err) {
+        ._test_getArgs((args, err) => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -609,11 +606,11 @@ describe('Command', function() {
     });
   });
 
-  describe('setDuration', function() {
+  describe('setDuration', () => {
     it('should apply the record duration argument', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .setDuration(10)
-        ._test_getArgs(function(args, err) {
+        ._test_getArgs((args, err) => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -624,11 +621,11 @@ describe('Command', function() {
     });
   });
 
-  describe('addOption(s)', function() {
+  describe('addOption(s)', () => {
     it('should apply a single option', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .addOption('-ab', '256k')
-        ._test_getArgs(function(args, err) {
+        ._test_getArgs((args, err) => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -642,7 +639,7 @@ describe('Command', function() {
         .addOptions(['-flags', '+loop', '-cmp', '+chroma', '-partitions','+parti4x4+partp8x8+partb8x8'])
         .addOptions('-single option')
         .addOptions('-multiple', '-options')
-        ._test_getArgs(function(args, err) {
+        ._test_getArgs((args, err) => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -662,7 +659,7 @@ describe('Command', function() {
     it('should apply a single input option', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .addInputOption('-r', '29.97')
-        ._test_getArgs(function(args, err) {
+        ._test_getArgs((args, err) => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -676,7 +673,7 @@ describe('Command', function() {
         .addInputOptions(['-r 29.97', '-f ogg'])
         .addInputOptions('-single option')
         .addInputOptions('-multiple', '-options')
-        ._test_getArgs(function(args, err) {
+        ._test_getArgs((args, err) => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -691,11 +688,11 @@ describe('Command', function() {
     });
   });
 
-  describe('toFormat', function() {
+  describe('toFormat', () => {
     it('should apply the target format', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .toFormat('mp4')
-        ._test_getArgs(function(args, err) {
+        ._test_getArgs((args, err) => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -706,9 +703,9 @@ describe('Command', function() {
     });
   });
 
-  describe('Size calculations', function() {
-    it('Should throw an error when an invalid aspect ratio is passed', function() {
-      (function() {
+  describe('Size calculations', () => {
+    it('Should throw an error when an invalid aspect ratio is passed', () => {
+      (() => {
         new Ffmpeg().aspect('blah');
       }).should.throw(/Invalid aspect ratio/);
     });
@@ -724,8 +721,8 @@ describe('Command', function() {
       filters[1].should.equal('setsar=1');
     });
 
-    it('Should throw an error when an invalid size was requested', function() {
-      (function() {
+    it('Should throw an error when an invalid size was requested', () => {
+      (() => {
         new Ffmpeg().withSize('aslkdbasd');
       }).should.throw(/^Invalid size specified/);
     });
@@ -954,8 +951,8 @@ describe('Command', function() {
     });
   });
 
-  describe('complexFilter', function() {
-    it('should generate a complex filter from a single filter', function() {
+  describe('complexFilter', () => {
+    it('should generate a complex filter from a single filter', () => {
       var filters = new Ffmpeg()
         .complexFilter('filterstring')
         ._getArguments();
@@ -965,7 +962,7 @@ describe('Command', function() {
       filters[1].should.equal('filterstring');
     });
 
-    it('should generate a complex filter from a filter array', function() {
+    it('should generate a complex filter from a filter array', () => {
       var filters = new Ffmpeg()
         .complexFilter(['filter1', 'filter2'])
         ._getArguments();
@@ -974,7 +971,7 @@ describe('Command', function() {
       filters[1].should.equal('filter1;filter2');
     });
 
-    it('should support filter objects', function() {
+    it('should support filter objects', () => {
       var filters = new Ffmpeg()
         .complexFilter([
           'filter1',
@@ -986,7 +983,7 @@ describe('Command', function() {
       filters[1].should.equal('filter1;filter2');
     });
 
-    it('should support filter options', function() {
+    it('should support filter options', () => {
       var filters = new Ffmpeg()
         .complexFilter([
           { filter: 'filter1', options: 'optionstring' },
@@ -999,7 +996,7 @@ describe('Command', function() {
       filters[1].should.equal('filter1=optionstring;filter2=opt1:opt2:opt3;filter3=opt1=value1:opt2=value2');
     });
 
-    it('should escape filter options with ambiguous characters', function() {
+    it('should escape filter options with ambiguous characters', () => {
       var filters = new Ffmpeg()
         .complexFilter([
           { filter: 'filter1', options: 'optionstring' },
@@ -1012,7 +1009,7 @@ describe('Command', function() {
       filters[1].should.equal('filter1=optionstring;filter2=\'op,t1\':\'op,t2\':\'op,t3\';filter3=opt1=\'val,ue1\':opt2=\'val,ue2\'');
     });
 
-    it('should support filter input streams', function() {
+    it('should support filter input streams', () => {
       var filters = new Ffmpeg()
         .complexFilter([
           { filter: 'filter1', inputs: 'input' },
@@ -1025,7 +1022,7 @@ describe('Command', function() {
       filters[1].should.equal('[input]filter1;[input]filter2;[input1][input2]filter3');
     });
 
-    it('should support filter output streams', function() {
+    it('should support filter output streams', () => {
       var filters = new Ffmpeg()
         .complexFilter([
           { filter: 'filter1', options: 'opt', outputs: 'output' },
@@ -1038,7 +1035,7 @@ describe('Command', function() {
       filters[1].should.equal('filter1=opt[output];filter2=opt[output];filter3=opt[output1][output2]');
     });
 
-    it('should support an additional mapping argument', function() {
+    it('should support an additional mapping argument', () => {
       var filters = new Ffmpeg()
         .complexFilter(['filter1', 'filter2'], 'output')
         ._getArguments();
@@ -1066,7 +1063,7 @@ describe('Command', function() {
       filters[5].should.equal('[output2]');
     });
 
-    it('should override any previously set complex filtergraphs', function() {
+    it('should override any previously set complex filtergraphs', () => {
       var filters = new Ffmpeg()
         .complexFilter(['filter1a', 'filter1b'], 'output1')
         .complexFilter(['filter2a', 'filter2b'], 'output2')
@@ -1079,7 +1076,7 @@ describe('Command', function() {
     });
   });
 
-  describe('clone', function() {
+  describe('clone', () => {
     it('should return a new FfmpegCommand instance', function() {
       var command = new Ffmpeg({ source: this.testfile, logger: testhelper.logger });
       var clone = command.clone();
@@ -1094,10 +1091,10 @@ describe('Command', function() {
 
       var clone = command.clone();
 
-      command._test_getArgs(function(originalArgs) {
-        clone._test_getArgs(function(cloneArgs) {
+      command._test_getArgs((originalArgs) => {
+        clone._test_getArgs((cloneArgs) => {
           cloneArgs.length.should.equal(originalArgs.length);
-          originalArgs.forEach(function(arg, index) {
+          originalArgs.forEach((arg, index) => {
             cloneArgs[index].should.equal(arg);
           });
           done();
@@ -1111,8 +1108,8 @@ describe('Command', function() {
 
       var clone = command.clone().audioFrequency(22050);
 
-      command._test_getArgs(function(originalArgs) {
-        clone._test_getArgs(function(cloneArgs) {
+      command._test_getArgs((originalArgs) => {
+        clone._test_getArgs((cloneArgs) => {
           cloneArgs.length.should.equal(originalArgs.length + 2);
           done();
         });

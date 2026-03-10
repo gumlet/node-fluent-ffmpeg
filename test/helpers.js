@@ -1,10 +1,10 @@
 /*jshint node:true*/
-'use strict';
+
 
 var TestHelpers;
 
 exports = module.exports = TestHelpers = {
-  getFfmpegCheck: function() {
+  getFfmpegCheck: () => {
     var platform = require('os').platform();
 
     if (!platform.match(/win(32|64)/)) {
@@ -17,13 +17,13 @@ exports = module.exports = TestHelpers = {
   },
 
   logger: {
-    debug: function(arg) { if (process.env.FLUENTFFMPEG_COV !== '1') console.log('          [DEBUG] ' + arg); },
-    info: function(arg) { if (process.env.FLUENTFFMPEG_COV !== '1') console.log('          [INFO] ' + arg); },
-    warn: function(arg) { if (process.env.FLUENTFFMPEG_COV !== '1') console.log('          [WARN] ' + arg); },
-    error: function(arg) { if (process.env.FLUENTFFMPEG_COV !== '1') console.log('          [ERROR] ' + arg); }
+    debug: (arg) => { if (process.env.FLUENTFFMPEG_COV !== '1') console.log('          [DEBUG] ' + arg); },
+    info: (arg) => { if (process.env.FLUENTFFMPEG_COV !== '1') console.log('          [INFO] ' + arg); },
+    warn: (arg) => { if (process.env.FLUENTFFMPEG_COV !== '1') console.log('          [WARN] ' + arg); },
+    error: (arg) => { if (process.env.FLUENTFFMPEG_COV !== '1') console.log('          [ERROR] ' + arg); }
   },
 
-  logArgError: function(err) {
+  logArgError: (err) => {
     if (err) {
       console.log('got error: ' + (err.stack || err));
       if (err.ffmpegOut) {
@@ -41,7 +41,7 @@ exports = module.exports = TestHelpers = {
     }
   },
 
-  logError: function(err, stdout, stderr) {
+  logError: (err, stdout, stderr) => {
     if (err) {
       console.log('got error: ' + (err.stack || err));
       if (err.ffmpegOut) {
@@ -67,7 +67,7 @@ exports = module.exports = TestHelpers = {
     }
   },
 
-  logOutput: function(stdout, stderr) {
+  logOutput: (stdout, stderr) => {
     if (stdout) {
       console.log('---stdout---');
       console.log(stdout);

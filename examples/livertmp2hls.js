@@ -19,10 +19,10 @@ var proc = ffmpeg('rtmp://path/to/live/stream', { timeout: 432000 })
   // include all the segments in the list
   .addOption('-hls_list_size',0)
   // setup event handlers
-  .on('end', function() {
+  .on('end', () => {
     console.log('file has been converted succesfully');
   })
-  .on('error', function(err) {
+  .on('error', (err) => {
     console.log('an error happened: ' + err.message);
   })
   // save to file

@@ -1,6 +1,6 @@
 /*jshint node:true*/
 /*global describe,it,beforeEach,afterEach,after*/
-'use strict';
+
 
 var Ffmpeg = require('../index'),
   path = require('path'),
@@ -12,10 +12,10 @@ var Ffmpeg = require('../index'),
 var PATH_DELIMITER = path.delimiter || (require('os').platform().match(/win(32|64)/) ? ';' : ':');
 
 
-describe('Capabilities', function() {
-  describe('ffmpeg capabilities', function() {
-    it('should enable querying for available codecs', function(done) {
-      new Ffmpeg({ source: '' }).getAvailableCodecs(function(err, codecs) {
+describe('Capabilities', () => {
+  describe('ffmpeg capabilities', () => {
+    it('should enable querying for available codecs', (done) => {
+      new Ffmpeg({ source: '' }).getAvailableCodecs((err, codecs) => {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -36,8 +36,8 @@ describe('Capabilities', function() {
       });
     });
 
-    it('should enable querying for available encoders', function(done) {
-      new Ffmpeg({ source: '' }).getAvailableEncoders(function(err, encoders) {
+    it('should enable querying for available encoders', (done) => {
+      new Ffmpeg({ source: '' }).getAvailableEncoders((err, encoders) => {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -56,8 +56,8 @@ describe('Capabilities', function() {
       });
     });
 
-    it('should enable querying for available formats', function(done) {
-      new Ffmpeg({ source: '' }).getAvailableFormats(function(err, formats) {
+    it('should enable querying for available formats', (done) => {
+      new Ffmpeg({ source: '' }).getAvailableFormats((err, formats) => {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -76,8 +76,8 @@ describe('Capabilities', function() {
       });
     });
 
-    it('should enable querying for available filters', function(done) {
-      new Ffmpeg({ source: '' }).getAvailableFilters(function(err, filters) {
+    it('should enable querying for available filters', (done) => {
+      new Ffmpeg({ source: '' }).getAvailableFilters((err, filters) => {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -100,22 +100,22 @@ describe('Capabilities', function() {
       });
     });
 
-    it('should enable querying capabilities without instanciating a command', function(done) {
-      Ffmpeg.getAvailableCodecs(function(err, codecs) {
+    it('should enable querying capabilities without instanciating a command', (done) => {
+      Ffmpeg.getAvailableCodecs((err, codecs) => {
         testhelper.logError(err);
         assert.ok(!err);
 
         (typeof codecs).should.equal('object');
         Object.keys(codecs).length.should.not.equal(0);
 
-        Ffmpeg.getAvailableFilters(function(err, filters) {
+        Ffmpeg.getAvailableFilters((err, filters) => {
           testhelper.logError(err);
           assert.ok(!err);
 
           (typeof filters).should.equal('object');
           Object.keys(filters).length.should.not.equal(0);
 
-          Ffmpeg.getAvailableFormats(function(err, formats) {
+          Ffmpeg.getAvailableFormats((err, formats) => {
             testhelper.logError(err);
             assert.ok(!err);
 
@@ -128,10 +128,10 @@ describe('Capabilities', function() {
       });
     });
 
-    it('should enable checking command arguments for available codecs, formats and encoders', function(done) {
+    it('should enable checking command arguments for available codecs, formats and encoders', (done) => {
       async.waterfall([
         // Check with everything available
-        function(cb) {
+        (cb) => {
           new Ffmpeg('/path/to/file.avi')
             .fromFormat('avi')
             .audioCodec('pcm_u16le')
@@ -141,13 +141,13 @@ describe('Capabilities', function() {
         },
 
         // Invalid input format
-        function(cb) {
+        (cb) => {
           new Ffmpeg('/path/to/file.avi')
             .fromFormat('invalid-input-format')
             .audioCodec('pcm_u16le')
             .videoCodec('png')
             .toFormat('mp4')
-            ._checkCapabilities(function(err) {
+            ._checkCapabilities((err) => {
               assert.ok(!!err);
               err.message.should.match(/Input format invalid-input-format is not available/);
 
@@ -156,13 +156,13 @@ describe('Capabilities', function() {
         },
 
         // Invalid output format
-        function(cb) {
+        (cb) => {
           new Ffmpeg('/path/to/file.avi')
             .fromFormat('avi')
             .audioCodec('pcm_u16le')
             .videoCodec('png')
             .toFormat('invalid-output-format')
-            ._checkCapabilities(function(err) {
+            ._checkCapabilities((err) => {
               assert.ok(!!err);
               err.message.should.match(/Output format invalid-output-format is not available/);
 
@@ -171,13 +171,13 @@ describe('Capabilities', function() {
         },
 
         // Invalid audio codec
-        function(cb) {
+        (cb) => {
           new Ffmpeg('/path/to/file.avi')
             .fromFormat('avi')
             .audioCodec('invalid-audio-codec')
             .videoCodec('png')
             .toFormat('mp4')
-            ._checkCapabilities(function(err) {
+            ._checkCapabilities((err) => {
               assert.ok(!!err);
               err.message.should.match(/Audio codec invalid-audio-codec is not available/);
 
@@ -186,13 +186,13 @@ describe('Capabilities', function() {
         },
 
         // Invalid video codec
-        function(cb) {
+        (cb) => {
           new Ffmpeg('/path/to/file.avi')
             .fromFormat('avi')
             .audioCodec('pcm_u16le')
             .videoCodec('invalid-video-codec')
             .toFormat('mp4')
-            ._checkCapabilities(function(err) {
+            ._checkCapabilities((err) => {
               assert.ok(!!err);
               err.message.should.match(/Video codec invalid-video-codec is not available/);
 
@@ -201,14 +201,14 @@ describe('Capabilities', function() {
         },
 
         // Invalid audio encoder
-        function(cb) {
+        (cb) => {
           new Ffmpeg('/path/to/file.avi')
             .fromFormat('avi')
             // Valid codec, but not a valid encoder for audio
             .audioCodec('png')
             .videoCodec('png')
             .toFormat('mp4')
-            ._checkCapabilities(function(err) {
+            ._checkCapabilities((err) => {
               assert.ok(!!err);
               err.message.should.match(/Audio codec png is not available/);
 
@@ -217,21 +217,21 @@ describe('Capabilities', function() {
         },
 
         // Invalid video encoder
-        function(cb) {
+        (cb) => {
           new Ffmpeg('/path/to/file.avi')
             .fromFormat('avi')
             .audioCodec('pcm_u16le')
             // Valid codec, but not a valid encoder for video
             .videoCodec('pcm_u16le')
             .toFormat('mp4')
-            ._checkCapabilities(function(err) {
+            ._checkCapabilities((err) => {
               assert.ok(!!err);
               err.message.should.match(/Video codec pcm_u16le is not available/);
 
               cb();
             });
         }
-      ], function(err) {
+      ], (err) => {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -239,9 +239,9 @@ describe('Capabilities', function() {
       });
     });
 
-    it('should check capabilities before running a command', function(done) {
+    it('should check capabilities before running a command', (done) => {
       new Ffmpeg('/path/to/file.avi')
-        .on('error', function(err) {
+        .on('error', (err) => {
           err.message.should.match(/Output format invalid-output-format is not available/);
           done();
         })
@@ -250,7 +250,7 @@ describe('Capabilities', function() {
     });
   });
 
-  describe('ffmpeg path', function() {
+  describe('ffmpeg path', () => {
     var FFMPEG_PATH;
     var ALT_FFMPEG_PATH;
     var skipAltTest = false;
@@ -262,26 +262,26 @@ describe('Capabilities', function() {
       skipAltTest = true;
     }
 
-    beforeEach(function() {
+    beforeEach(() => {
       // Save environment before each test
       FFMPEG_PATH = process.env.FFMPEG_PATH;
     });
 
-    afterEach(function() {
+    afterEach(() => {
       // Restore environment after each test
       process.env.FFMPEG_PATH = FFMPEG_PATH;
     });
 
-    after(function() {
+    after(() => {
       // Forget paths after all tests
       (new Ffmpeg())._forgetPaths();
     });
 
-    it('should allow manual definition of ffmpeg binary path', function(done) {
+    it('should allow manual definition of ffmpeg binary path', (done) => {
       var ff = new Ffmpeg();
 
       ff.setFfmpegPath('/doom/di/dom');
-      ff._getFfmpegPath(function(err, ffmpeg) {
+      ff._getFfmpegPath((err, ffmpeg) => {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -290,11 +290,11 @@ describe('Capabilities', function() {
       });
     });
 
-    it('should allow static manual definition of ffmpeg binary path', function(done) {
+    it('should allow static manual definition of ffmpeg binary path', (done) => {
       var ff = new Ffmpeg();
 
       Ffmpeg.setFfmpegPath('/doom/di/dom2');
-      ff._getFfmpegPath(function(err, ffmpeg) {
+      ff._getFfmpegPath((err, ffmpeg) => {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -303,13 +303,13 @@ describe('Capabilities', function() {
       });
     });
 
-    it('should look for ffmpeg in the PATH if FFMPEG_PATH is not defined', function(done) {
+    it('should look for ffmpeg in the PATH if FFMPEG_PATH is not defined', (done) => {
       var ff = new Ffmpeg();
 
       delete process.env.FFMPEG_PATH;
 
       ff._forgetPaths();
-      ff._getFfmpegPath(function(err, ffmpeg) {
+      ff._getFfmpegPath((err, ffmpeg) => {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -322,13 +322,13 @@ describe('Capabilities', function() {
       });
     });
 
-    (skipAltTest ? it.skip : it)('should use FFMPEG_PATH if defined and valid', function(done) {
+    (skipAltTest ? it.skip : it)('should use FFMPEG_PATH if defined and valid', (done) => {
       var ff = new Ffmpeg();
 
       process.env.FFMPEG_PATH = ALT_FFMPEG_PATH;
 
       ff._forgetPaths();
-      ff._getFfmpegPath(function(err, ffmpeg) {
+      ff._getFfmpegPath((err, ffmpeg) => {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -337,13 +337,13 @@ describe('Capabilities', function() {
       });
     });
 
-    it('should fall back to searching in the PATH if FFMPEG_PATH is invalid', function(done) {
+    it('should fall back to searching in the PATH if FFMPEG_PATH is invalid', (done) => {
       var ff = new Ffmpeg();
 
       process.env.FFMPEG_PATH = '/nope/not-here/nothing-to-see-here';
 
       ff._forgetPaths();
-      ff._getFfmpegPath(function(err, ffmpeg) {
+      ff._getFfmpegPath((err, ffmpeg) => {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -356,13 +356,13 @@ describe('Capabilities', function() {
       });
     });
 
-    it('should remember ffmpeg path', function(done) {
+    it('should remember ffmpeg path', (done) => {
       var ff = new Ffmpeg();
 
       delete process.env.FFMPEG_PATH;
 
       ff._forgetPaths();
-      ff._getFfmpegPath(function(err, ffmpeg) {
+      ff._getFfmpegPath((err, ffmpeg) => {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -372,7 +372,7 @@ describe('Capabilities', function() {
         // Just check that the callback is actually called synchronously
         // (which indicates no which call was made)
         var after = 0;
-        ff._getFfmpegPath(function(err, ffmpeg) {
+        ff._getFfmpegPath((err, ffmpeg) => {
           testhelper.logError(err);
           assert.ok(!err);
 
@@ -388,7 +388,7 @@ describe('Capabilities', function() {
     });
   });
 
-  describe('ffprobe path', function() {
+  describe('ffprobe path', () => {
     var FFPROBE_PATH;
     var ALT_FFPROBE_PATH;
     var skipAltTest = false;
@@ -400,26 +400,26 @@ describe('Capabilities', function() {
       skipAltTest = true;
     }
 
-    beforeEach(function() {
+    beforeEach(() => {
       // Save environment before each test
       FFPROBE_PATH = process.env.FFPROBE_PATH;
     });
 
-    afterEach(function() {
+    afterEach(() => {
       // Restore environment after each test
       process.env.FFPROBE_PATH = FFPROBE_PATH;
     });
 
-    after(function() {
+    after(() => {
       // Forget paths after all tests
       (new Ffmpeg())._forgetPaths();
     });
 
-    it('should allow manual definition of ffprobe binary path', function(done) {
+    it('should allow manual definition of ffprobe binary path', (done) => {
       var ff = new Ffmpeg();
 
       ff.setFfprobePath('/doom/di/dom');
-      ff._getFfprobePath(function(err, ffprobe) {
+      ff._getFfprobePath((err, ffprobe) => {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -428,11 +428,11 @@ describe('Capabilities', function() {
       });
     });
 
-    it('should allow static manual definition of ffprobe binary path', function(done) {
+    it('should allow static manual definition of ffprobe binary path', (done) => {
       var ff = new Ffmpeg();
 
       Ffmpeg.setFfprobePath('/doom/di/dom2');
-      ff._getFfprobePath(function(err, ffprobe) {
+      ff._getFfprobePath((err, ffprobe) => {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -441,13 +441,13 @@ describe('Capabilities', function() {
       });
     });
 
-    it('should look for ffprobe in the PATH if FFPROBE_PATH is not defined', function(done) {
+    it('should look for ffprobe in the PATH if FFPROBE_PATH is not defined', (done) => {
       var ff = new Ffmpeg();
 
       delete process.env.FFPROBE_PATH;
 
       ff._forgetPaths();
-      ff._getFfprobePath(function(err, ffprobe) {
+      ff._getFfprobePath((err, ffprobe) => {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -460,13 +460,13 @@ describe('Capabilities', function() {
       });
     });
 
-    (skipAltTest ? it.skip : it)('should use FFPROBE_PATH if defined and valid', function(done) {
+    (skipAltTest ? it.skip : it)('should use FFPROBE_PATH if defined and valid', (done) => {
       var ff = new Ffmpeg();
 
       process.env.FFPROBE_PATH = ALT_FFPROBE_PATH;
 
       ff._forgetPaths();
-      ff._getFfprobePath(function(err, ffprobe) {
+      ff._getFfprobePath((err, ffprobe) => {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -475,13 +475,13 @@ describe('Capabilities', function() {
       });
     });
 
-    it('should fall back to searching in the PATH if FFPROBE_PATH is invalid', function(done) {
+    it('should fall back to searching in the PATH if FFPROBE_PATH is invalid', (done) => {
       var ff = new Ffmpeg();
 
       process.env.FFPROBE_PATH = '/nope/not-here/nothing-to-see-here';
 
       ff._forgetPaths();
-      ff._getFfprobePath(function(err, ffprobe) {
+      ff._getFfprobePath((err, ffprobe) => {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -494,13 +494,13 @@ describe('Capabilities', function() {
       });
     });
 
-    it('should remember ffprobe path', function(done) {
+    it('should remember ffprobe path', (done) => {
       var ff = new Ffmpeg();
 
       delete process.env.FFPROBE_PATH;
 
       ff._forgetPaths();
-      ff._getFfprobePath(function(err, ffprobe) {
+      ff._getFfprobePath((err, ffprobe) => {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -510,7 +510,7 @@ describe('Capabilities', function() {
         // Just check that the callback is actually called synchronously
         // (which indicates no which call was made)
         var after = 0;
-        ff._getFfprobePath(function(err, ffprobe) {
+        ff._getFfprobePath((err, ffprobe) => {
           testhelper.logError(err);
           assert.ok(!err);
 
@@ -526,7 +526,7 @@ describe('Capabilities', function() {
     });
   });
 
-  describe('flvtool path', function() {
+  describe('flvtool path', () => {
     var FLVTOOL2_PATH;
     var ALT_FLVTOOL_PATH;
     var skipAltTest = false;
@@ -543,26 +543,26 @@ describe('Capabilities', function() {
       skipAltTest = true;
     }
 
-    beforeEach(function() {
+    beforeEach(() => {
       // Save environment before each test
       FLVTOOL2_PATH = process.env.FLVTOOL2_PATH;
     });
 
-    afterEach(function() {
+    afterEach(() => {
       // Restore environment after each test
       process.env.FLVTOOL2_PATH = FLVTOOL2_PATH;
     });
 
-    after(function() {
+    after(() => {
       // Forget paths after all tests
       (new Ffmpeg())._forgetPaths();
     });
 
-    (skipTest ? it.skip : it)('should allow manual definition of fflvtool binary path', function(done) {
+    (skipTest ? it.skip : it)('should allow manual definition of fflvtool binary path', (done) => {
       var ff = new Ffmpeg();
 
       ff.setFlvtoolPath('/doom/di/dom');
-      ff._getFlvtoolPath(function(err, fflvtool) {
+      ff._getFlvtoolPath((err, fflvtool) => {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -571,11 +571,11 @@ describe('Capabilities', function() {
       });
     });
 
-    (skipTest ? it.skip : it)('should allow static manual definition of fflvtool binary path', function(done) {
+    (skipTest ? it.skip : it)('should allow static manual definition of fflvtool binary path', (done) => {
       var ff = new Ffmpeg();
 
       Ffmpeg.setFlvtoolPath('/doom/di/dom2');
-      ff._getFlvtoolPath(function(err, fflvtool) {
+      ff._getFlvtoolPath((err, fflvtool) => {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -584,13 +584,13 @@ describe('Capabilities', function() {
       });
     });
 
-    (skipTest ? it.skip : it)('should look for fflvtool in the PATH if FLVTOOL2_PATH is not defined', function(done) {
+    (skipTest ? it.skip : it)('should look for fflvtool in the PATH if FLVTOOL2_PATH is not defined', (done) => {
       var ff = new Ffmpeg();
 
       delete process.env.FLVTOOL2_PATH;
 
       ff._forgetPaths();
-      ff._getFlvtoolPath(function(err, fflvtool) {
+      ff._getFlvtoolPath((err, fflvtool) => {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -603,13 +603,13 @@ describe('Capabilities', function() {
       });
     });
 
-    (skipTest || skipAltTest ? it.skip : it)('should use FLVTOOL2_PATH if defined and valid', function(done) {
+    (skipTest || skipAltTest ? it.skip : it)('should use FLVTOOL2_PATH if defined and valid', (done) => {
       var ff = new Ffmpeg();
 
       process.env.FLVTOOL2_PATH = ALT_FLVTOOL_PATH;
 
       ff._forgetPaths();
-      ff._getFlvtoolPath(function(err, fflvtool) {
+      ff._getFlvtoolPath((err, fflvtool) => {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -618,13 +618,13 @@ describe('Capabilities', function() {
       });
     });
 
-    (skipTest ? it.skip : it)('should fall back to searching in the PATH if FLVTOOL2_PATH is invalid', function(done) {
+    (skipTest ? it.skip : it)('should fall back to searching in the PATH if FLVTOOL2_PATH is invalid', (done) => {
       var ff = new Ffmpeg();
 
       process.env.FLVTOOL2_PATH = '/nope/not-here/nothing-to-see-here';
 
       ff._forgetPaths();
-      ff._getFlvtoolPath(function(err, fflvtool) {
+      ff._getFlvtoolPath((err, fflvtool) => {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -637,13 +637,13 @@ describe('Capabilities', function() {
       });
     });
 
-    (skipTest ? it.skip : it)('should remember fflvtool path', function(done) {
+    (skipTest ? it.skip : it)('should remember fflvtool path', (done) => {
       var ff = new Ffmpeg();
 
       delete process.env.FLVTOOL2_PATH;
 
       ff._forgetPaths();
-      ff._getFlvtoolPath(function(err, fflvtool) {
+      ff._getFlvtoolPath((err, fflvtool) => {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -653,7 +653,7 @@ describe('Capabilities', function() {
         // Just check that the callback is actually called synchronously
         // (which indicates no which call was made)
         var after = 0;
-        ff._getFlvtoolPath(function(err, fflvtool) {
+        ff._getFlvtoolPath((err, fflvtool) => {
           testhelper.logError(err);
           assert.ok(!err);
 
