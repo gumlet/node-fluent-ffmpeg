@@ -95,19 +95,19 @@ describe('Processor', () => {
 
   // cleanup helpers before and after all tests
   beforeEach(function setup(done) {
-    var processes = this.processes = [];
-    var outputs = this.outputs = [];
+    this.processes = [];
+    this.outputs = [];
 
     // Tests should call this so that created processes are watched
     // for exit and checked during test cleanup
     this.getCommand = (args) => {
       var cmd = new FfmpegCommand(args);
       cmd.on('start', () => {
-        processes.push(cmd.ffmpegProc);
+        this.processes.push(cmd.ffmpegProc);
 
         // Remove process when it exits
         cmd.ffmpegProc.on('exit', () => {
-          processes.splice(processes.indexOf(cmd.ffmpegProc), 1);
+          this.processes.splice(this.processes.indexOf(cmd.ffmpegProc), 1);
         });
       });
 
@@ -116,7 +116,7 @@ describe('Processor', () => {
 
     // Tests should call this to display stdout/stderr in case of error
     this.saveOutput = (stdout, stderr) => {
-      outputs.unshift([stdout, stderr]);
+      this.outputs.unshift([stdout, stderr]);
     };
 
     this.files = [];

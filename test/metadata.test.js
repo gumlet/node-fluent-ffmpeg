@@ -10,7 +10,6 @@ const __dirname = path.dirname(__filename);
 
 import Ffmpeg from '../index.js';
 import fs from 'node:fs';
-import { Readable } from 'node:stream';
 import { strict as assert } from 'node:assert';
 import { exec } from 'node:child_process';
 import testhelper from './helpers.js';

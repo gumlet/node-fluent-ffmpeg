@@ -413,7 +413,7 @@ describe('Command', () => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
-          if(args.indexOf('-loop') != -1 || args.indexOf('-loop_output') != -1){
+          if(args.indexOf('-loop') !== -1 || args.indexOf('-loop_output') !== -1){
             done();
           }
           else{
@@ -428,7 +428,7 @@ describe('Command', () => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
-          if(args.indexOf('-loop') != -1 || args.indexOf('-loop_output') != -1){
+          if(args.indexOf('-loop') !== -1 || args.indexOf('-loop_output') !== -1){
             args.indexOf('-t').should.above(-1);
             args.indexOf(120).should.above(-1);
             done();
@@ -446,7 +446,7 @@ describe('Command', () => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
-          if(args.indexOf('-loop') != -1 || args.indexOf('-loop_output') != -1){
+          if(args.indexOf('-loop') !== -1 || args.indexOf('-loop_output') !== -1){
             args.indexOf('-t').should.above(-1);
             args.indexOf('00:06:46.81').should.above(-1);
             done();
