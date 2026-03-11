@@ -43,7 +43,6 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "vitest",
-    "coverage": "vitest --coverage"
+    "test": "vitest --coverage"
   }
 }
