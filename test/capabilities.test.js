@@ -624,15 +624,14 @@ describe('Capabilities', () => {
       var ff = new Ffmpeg();
 
       delete process.env.FLVTOOL2_PATH;
-
-      ff._forgetPaths();
       return new Promise((resolve) => {
-      ff._getFlvtoolPath((err, fflvtool) => {
+        ff._forgetPaths();
+        ff._getFlvtoolPath((err, fflvtool) => {
         testhelper.logError(err);
         expect(err).toBeNull();
 
-        expect(flvtool).toBeInstanceOf(String)
-        expect(flvtool).toHaveLengthGreaterThan(0);
+        expect(typeof fflvtool).toBe('string');
+        expect(fflvtool).toHaveLengthGreaterThan(0);
 
         var paths = process.env.PATH.split(PATH_DELIMITER);
         expect(paths).toContain(path.dirname(fflvtool))
@@ -641,14 +640,14 @@ describe('Capabilities', () => {
     })
     });
 
-    (skipTest || skipAltTest ? it.skip : it)('should use FLVTOOL2_PATH if defined and valid', () => {
+    (skipTest || skipAltTest ? it.skip : it)('should use FLVTOOL2_PATH if defined and valid', () => {
       var ff = new Ffmpeg();
 
       process.env.FLVTOOL2_PATH = ALT_FLVTOOL_PATH;
 
-      ff._forgetPaths();
       return new Promise((resolve) => {
-      ff._getFlvtoolPath((err, fflvtool) => {
+        ff._forgetPaths();
+        ff._getFlvtoolPath((err, fflvtool) => {
         testhelper.logError(err);
         expect(err).toBeNull();
 
@@ -669,7 +668,7 @@ describe('Capabilities', () => {
         testhelper.logError(err);
         expect(err).toBeNull();
 
-        expect(fflvtool).toBeInstanceOf(String);
+        expect(typeof fflvtool).toBe('string');
         expect(fflvtool).toHaveLengthGreaterThan(0);
 
         var paths = process.env.PATH.split(PATH_DELIMITER);
@@ -690,7 +689,7 @@ describe('Capabilities', () => {
         testhelper.logError(err);
         expect(err).toBeNull();
 
-        expect(fflvtool).toBeInstanceOf(String);
+        expect(typeof fflvtool).toBe('string');
         expect(fflvtool).toHaveLengthGreaterThan(0);
 
         // Just check that the callback is actually called synchronously
@@ -700,7 +699,7 @@ describe('Capabilities', () => {
           testhelper.logError(err);
           expect(err).toBeNull();
 
-          expect(fflvtool).toBeInstanceOf(String);
+          expect(typeof fflvtool).toBe('string');
           expect(fflvtool).toHaveLengthGreaterThan(0);
           expect(after).toBe(0);
 
