@@ -48,45 +48,54 @@ describe('Command', () => {
 
   describe('usingPreset', () => {
     it('should properly generate the command for the requested preset', () => {
-      new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .usingPreset('podcast')
-        ._test_getArgs((args, err) => {
-          testhelper.logArgError(err);
-          assert.ok(!err);
+      return new Promise((resolve) => {
+        new Ffmpeg({ source: testfile, logger: testhelper.logger })
+          .usingPreset('podcast')
+          ._test_getArgs((args, err) => {
+            testhelper.logArgError(err);
+            assert.ok(!err);
 
-          expect(args.length).toBe(42)
-        });
+            expect(args.length).toBe(42);
+            resolve();
+          });
+      });
     });
 
     it('should properly generate the command for the requested preset in custom folder', () => {
-      new Ffmpeg({ source: testfile, nolog: true, preset: path.join(__dirname, 'assets', 'presets') })
-        .usingPreset('custompreset')
-        ._test_getArgs((args) => {
-          expect(args.length).toBe(42)
-        });
+      return new Promise((resolve) => {
+        new Ffmpeg({ source: testfile, nolog: true, preset: path.join(__dirname, 'assets', 'presets') })
+          .usingPreset('custompreset')
+          ._test_getArgs((args) => {
+            expect(args.length).toBe(42);
+            resolve();
+          });
+      });
     });
 
     it('should allow using functions as presets', () => {
-      var presetArg;
+      return new Promise((resolve) => {
+        var presetArg;
 
-      function presetFunc(command) {
-        presetArg = command;
-        command.withVideoCodec('libx264');
-        command.withAudioFrequency(22050);
-      }
+        function presetFunc(command) {
+          presetArg = command;
+          command.withVideoCodec('libx264');
+          command.withAudioFrequency(22050);
+        }
 
-      var cmd = new Ffmpeg({ source: testfile, logger: testhelper.logger });
+        var cmd = new Ffmpeg({ source: testfile, logger: testhelper.logger });
 
-      cmd
-        .usingPreset(presetFunc)
-        ._test_getArgs((args, err) => {
-          testhelper.logArgError(err);
-          assert.ok(!err);
+        cmd
+          .usingPreset(presetFunc)
+          ._test_getArgs((args, err) => {
+            testhelper.logArgError(err);
+            assert.ok(!err);
 
-          expect(presetArg).toEqual(cmd);
-          expect(args.join(' ')).toContain('-vcodec libx264');
-          expect(args.join(' ')).toContain('-ar 22050');
-        });
+            expect(presetArg).toEqual(cmd);
+            expect(args.join(' ')).toContain('-vcodec libx264');
+            expect(args.join(' ')).toContain('-ar 22050');
+            resolve();
+          });
+      });
     });
 
     it('should throw an exception when a preset is not found', () => {
@@ -105,148 +114,180 @@ describe('Command', () => {
 
   describe('withNoVideo', () => {
     it('should apply the skip video argument', () => {
-      new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .withNoVideo()
-        ._test_getArgs((args, err) => {
-          testhelper.logArgError(err);
-          assert.ok(!err);
-          expect(args).toContain('-vn')
-
-        });
+      return new Promise((resolve) => {
+        new Ffmpeg({ source: testfile, logger: testhelper.logger })
+          .withNoVideo()
+          ._test_getArgs((args, err) => {
+            testhelper.logArgError(err);
+            assert.ok(!err);
+            expect(args).toContain('-vn');
+            resolve();
+          });
+      });
     });
     it('should skip any video transformation options', () => {
-      new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .withSize('320x?')
-        .withNoVideo()
-        .withAudioBitrate('256k')
-        ._test_getArgs((args, err) => {
-          testhelper.logArgError(err);
-          assert.ok(!err);
-          expect(args).toContain('-vn');
-          expect(args).not.toContain('-s');
-          expect(args).toContain('-b:a');
-        });
+      return new Promise((resolve) => {
+        new Ffmpeg({ source: testfile, logger: testhelper.logger })
+          .withSize('320x?')
+          .withNoVideo()
+          .withAudioBitrate('256k')
+          ._test_getArgs((args, err) => {
+            testhelper.logArgError(err);
+            assert.ok(!err);
+            expect(args).toContain('-vn');
+            expect(args).not.toContain('-s');
+            expect(args).toContain('-b:a');
+            resolve();
+          });
+      });
     });
   });
 
   describe('withNoAudio', () => {
     it('should apply the skip audio argument', () => {
-      new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .withNoAudio()
-        ._test_getArgs((args, err) => {
-          testhelper.logArgError(err);
-          assert.ok(!err);
+      return new Promise((resolve) => {
+        new Ffmpeg({ source: testfile, logger: testhelper.logger })
+          .withNoAudio()
+          ._test_getArgs((args, err) => {
+            testhelper.logArgError(err);
+            assert.ok(!err);
 
-          expect(args).toContain('-an');
-        });
+            expect(args).toContain('-an');
+            resolve();
+          });
+      });
     });
     it('should skip any audio transformation options', () => {
-      new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .withAudioChannels(2)
-        .withNoAudio()
-        .withSize('320x?')
-        ._test_getArgs((args, err) => {
-          testhelper.logArgError(err);
-          assert.ok(!err);
+      return new Promise((resolve) => {
+        new Ffmpeg({ source: testfile, logger: testhelper.logger })
+          .withAudioChannels(2)
+          .withNoAudio()
+          .withSize('320x?')
+          ._test_getArgs((args, err) => {
+            testhelper.logArgError(err);
+            assert.ok(!err);
 
-          expect(args).toContain('-an');
-          expect(args).not.toContain('-ac');
-          expect(args).toContain('scale=w=320:h=trunc(ow/a/2)*2');
-        });
+            expect(args).toContain('-an');
+            expect(args).not.toContain('-ac');
+            expect(args).toContain('scale=w=320:h=trunc(ow/a/2)*2');
+            resolve();
+          });
+      });
     });
   });
 
   describe('withVideoBitrate', () => {
     it('should apply default bitrate argument by default', () => {
-      new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .withVideoBitrate('256k')
-        ._test_getArgs((args, err) => {
-          testhelper.logArgError(err);
-          assert.ok(!err);
+      return new Promise((resolve) => {
+        new Ffmpeg({ source: testfile, logger: testhelper.logger })
+          .withVideoBitrate('256k')
+          ._test_getArgs((args, err) => {
+            testhelper.logArgError(err);
+            assert.ok(!err);
 
-          expect(args).toContain('-b:v');
-        });
+            expect(args).toContain('-b:v');
+            resolve();
+          });
+      });
     });
     it('should apply additional bitrate arguments for constant bitrate', () => {
-      new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .withVideoBitrate('256k', true)
-        ._test_getArgs((args, err) => {
-          testhelper.logArgError(err);
-          assert.ok(!err);
+      return new Promise((resolve) => {
+        new Ffmpeg({ source: testfile, logger: testhelper.logger })
+          .withVideoBitrate('256k', true)
+          ._test_getArgs((args, err) => {
+            testhelper.logArgError(err);
+            assert.ok(!err);
 
-          expect(args).toContain('-b:v');
-          expect(args).toContain('-maxrate');
-          expect(args).toContain('-minrate');
-          expect(args).toContain('-bufsize');
-        });
+            expect(args).toContain('-b:v');
+            expect(args).toContain('-maxrate');
+            expect(args).toContain('-minrate');
+            expect(args).toContain('-bufsize');
+            resolve();
+          });
+      });
     });
   });
 
   describe('withMultiFile', () => {
     it('should allow image2 multi-file input format', () => {
-      new Ffmpeg({ source: 'image-%05d.png', logger: testhelper.logger })
-        ._test_getArgs((args, err) => {
-          testhelper.logArgError(err);
-          assert.ok(!err);
+      return new Promise((resolve) => {
+        new Ffmpeg({ source: 'image-%05d.png', logger: testhelper.logger })
+          ._test_getArgs((args, err) => {
+            testhelper.logArgError(err);
+            assert.ok(!err);
 
-          expect(args).toContain('-i');
-          expect(args).toContain('image-%05d.png');
-        });
+            expect(args).toContain('-i');
+            expect(args).toContain('image-%05d.png');
+            resolve();
+          });
+      });
     });
   });
 
   describe('withFps', () => {
     it('should apply the rate argument', () => {
-      new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .withFps(27.77)
-        ._test_getArgs((args, err) => {
-          testhelper.logArgError(err);
-          assert.ok(!err);
+      return new Promise((resolve) => {
+        new Ffmpeg({ source: testfile, logger: testhelper.logger })
+          .withFps(27.77)
+          ._test_getArgs((args, err) => {
+            testhelper.logArgError(err);
+            assert.ok(!err);
 
-          expect(args).toContain('-r');
-          expect(args).toContain(27.77);
-        });
+            expect(args).toContain('-r');
+            expect(args).toContain(27.77);
+            resolve();
+          });
+      });
     });
   });
 
   describe('withInputFPS', () => {
     it('should apply the rate argument', () => {
-      new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .withInputFPS(27.77)
-        ._test_getArgs((args, err) => {
-          testhelper.logArgError(err);
-          assert.ok(!err);
+      return new Promise((resolve) => {
+        new Ffmpeg({ source: testfile, logger: testhelper.logger })
+          .withInputFPS(27.77)
+          ._test_getArgs((args, err) => {
+            testhelper.logArgError(err);
+            assert.ok(!err);
 
-          expect(args).toContain('-r');
-          expect(args).toContain(27.77);
-        });
+            expect(args).toContain('-r');
+            expect(args).toContain(27.77);
+            resolve();
+          });
+      });
     });
   });
 
   describe('native', () => {
     it('should apply the native framerate argument', () => {
-      new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .native()
-        ._test_getArgs((args, err) => {
-          testhelper.logArgError(err);
-          assert.ok(!err);
+      return new Promise((resolve) => {
+        new Ffmpeg({ source: testfile, logger: testhelper.logger })
+          .native()
+          ._test_getArgs((args, err) => {
+            testhelper.logArgError(err);
+            assert.ok(!err);
 
-          expect(args).toContain('-re');
-        });
+            expect(args).toContain('-re');
+            resolve();
+          });
+      });
     });
   });
 
   describe('addingAdditionalInput', () => {
     it('should allow for additional inputs', () => {
-      new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .addInput('soundtrack.mp3')
-        ._test_getArgs((args, err) => {
-          testhelper.logArgError(err);
-          assert.ok(!err);
+      return new Promise((resolve) => {
+        new Ffmpeg({ source: testfile, logger: testhelper.logger })
+          .addInput('soundtrack.mp3')
+          ._test_getArgs((args, err) => {
+            testhelper.logArgError(err);
+            assert.ok(!err);
 
-          expect(args).toContain('-i');
-          expect(args).toContain('soundtrack.mp3');
-        });
+            expect(args).toContain('-i');
+            expect(args).toContain('soundtrack.mp3');
+            resolve();
+          });
+      });
     });
 
     it('should fail to add invalid inputs', () => {
@@ -288,370 +329,439 @@ describe('Command', () => {
 
   describe('withVideoCodec', () => {
     it('should apply the video codec argument', () => {
-      new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .withVideoCodec('libx264')
-        ._test_getArgs((args, err) => {
-          testhelper.logArgError(err);
-          assert.ok(!err);
+      return new Promise((resolve) => {
+        new Ffmpeg({ source: testfile, logger: testhelper.logger })
+          .withVideoCodec('libx264')
+          ._test_getArgs((args, err) => {
+            testhelper.logArgError(err);
+            assert.ok(!err);
 
-          expect(args).toContain('-vcodec');
-          expect(args).toContain('libx264');
-        });
+            expect(args).toContain('-vcodec');
+            expect(args).toContain('libx264');
+            resolve();
+          });
+      });
     });
   });
 
   describe('withVideoFilter', () => {
     it('should apply the video filter argument', () => {
-      new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .withVideoFilter('scale=123:456')
-        .withVideoFilter('pad=1230:4560:100:100:yellow')
-        .withVideoFilter('multiple=1', 'filters=2')
-        ._test_getArgs((args, err) => {
-          testhelper.logArgError(err);
-          assert.ok(!err);
+      return new Promise((resolve) => {
+        new Ffmpeg({ source: testfile, logger: testhelper.logger })
+          .withVideoFilter('scale=123:456')
+          .withVideoFilter('pad=1230:4560:100:100:yellow')
+          .withVideoFilter('multiple=1', 'filters=2')
+          ._test_getArgs((args, err) => {
+            testhelper.logArgError(err);
+            assert.ok(!err);
 
-          expect(args).toContain('-filter:v');
-          expect(args).toContain('scale=123:456,pad=1230:4560:100:100:yellow,multiple=1,filters=2');
-        });
+            expect(args).toContain('-filter:v');
+            expect(args).toContain('scale=123:456,pad=1230:4560:100:100:yellow,multiple=1,filters=2');
+            resolve();
+          });
+      });
     });
 
     it('should accept filter arrays', () => {
-      new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .withVideoFilter(['multiple=1', 'filters=2'])
-        ._test_getArgs((args, err) => {
-          testhelper.logArgError(err);
-          assert.ok(!err);
+      return new Promise((resolve) => {
+        new Ffmpeg({ source: testfile, logger: testhelper.logger })
+          .withVideoFilter(['multiple=1', 'filters=2'])
+          ._test_getArgs((args, err) => {
+            testhelper.logArgError(err);
+            assert.ok(!err);
 
-          expect(args).toContain('-filter:v');
-          expect(args).toContain('multiple=1,filters=2');
-        });
+            expect(args).toContain('-filter:v');
+            expect(args).toContain('multiple=1,filters=2');
+            resolve();
+          });
+      });
     });
 
     it('should enable using filter objects', () => {
-      new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .withVideoFilter(
-          {
-            filter: 'option_string',
-            options: 'opt1=value1:opt2=value2'
-          },
-          {
-            filter: 'unnamed_options',
-            options: ['opt1', 'opt2']
-          },
-          {
-            filter: 'named_options',
-            options: {
-              opt1: 'value1',
-              opt2: 'value2'
+      return new Promise((resolve) => {
+        new Ffmpeg({ source: testfile, logger: testhelper.logger })
+          .withVideoFilter(
+            {
+              filter: 'option_string',
+              options: 'opt1=value1:opt2=value2'
+            },
+            {
+              filter: 'unnamed_options',
+              options: ['opt1', 'opt2']
+            },
+            {
+              filter: 'named_options',
+              options: {
+                opt1: 'value1',
+                opt2: 'value2'
+              }
             }
-          }
-        )
-        ._test_getArgs((args, err) => {
-          testhelper.logArgError(err);
-          assert.ok(!err);
+          )
+          ._test_getArgs((args, err) => {
+            testhelper.logArgError(err);
+            assert.ok(!err);
 
-          expect(args).toContain('-filter:v');
-          expect(args).toContain('option_string=opt1=value1:opt2=value2,unnamed_options=opt1:opt2,named_options=opt1=value1:opt2=value2');
-        });
+            expect(args).toContain('-filter:v');
+            expect(args).toContain('option_string=opt1=value1:opt2=value2,unnamed_options=opt1:opt2,named_options=opt1=value1:opt2=value2');
+            resolve();
+          });
+      });
     });
   });
 
   describe('withAudioBitrate', () => {
     it('should apply the audio bitrate argument', () => {
-      new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .withAudioBitrate(256)
-        ._test_getArgs((args, err) => {
-          testhelper.logArgError(err);
-          assert.ok(!err);
+      return new Promise((resolve) => {
+        new Ffmpeg({ source: testfile, logger: testhelper.logger })
+          .withAudioBitrate(256)
+          ._test_getArgs((args, err) => {
+            testhelper.logArgError(err);
+            assert.ok(!err);
 
-          expect(args).toContain('-b:a');
-          expect(args).toContain('256k');
-        });
+            expect(args).toContain('-b:a');
+            expect(args).toContain('256k');
+            resolve();
+          });
+      });
     });
   });
 
   describe('loop', () => {
     it('should add the -loop 1 argument', () => {
-      new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .loop()
-        ._test_getArgs((args, err) => {
-          testhelper.logArgError(err);
-          assert.ok(!err);
+      return new Promise((resolve, reject) => {
+        new Ffmpeg({ source: testfile, logger: testhelper.logger })
+          .loop()
+          ._test_getArgs((args, err) => {
+            testhelper.logArgError(err);
+            assert.ok(!err);
 
-          if (args.indexOf('-loop') !== -1 || args.indexOf('-loop_output') !== -1) {
-            // everything is good
-          }
-          else {
-            throw new Error('args should contain loop or loop_output');
-          }
-        });
+            if (args.indexOf('-loop') !== -1 || args.indexOf('-loop_output') !== -1) {
+              // everything is good
+            }
+            else {
+              reject(new Error('args should contain loop or loop_output'));
+            }
+            resolve();
+          });
+      });
     });
     it('should add the -loop 1 and a time argument (seconds)', () => {
-      new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .loop(120)
-        ._test_getArgs((args, err) => {
-          testhelper.logArgError(err);
-          assert.ok(!err);
+      return new Promise((resolve, reject) => {
+        new Ffmpeg({ source: testfile, logger: testhelper.logger })
+          .loop(120)
+          ._test_getArgs((args, err) => {
+            testhelper.logArgError(err);
+            assert.ok(!err);
 
-          if (args.indexOf('-loop') !== -1 || args.indexOf('-loop_output') !== -1) {
-            expect(args).toContain('-t');
-            expect(args).toContain(120);
-          }
-          else {
-            throw new Error('args should contain loop or loop_output');
-          }
-        });
+            if (args.indexOf('-loop') !== -1 || args.indexOf('-loop_output') !== -1) {
+              expect(args).toContain('-t');
+              expect(args).toContain(120);
+            }
+            else {
+              reject(new Error('args should contain loop or loop_output'));
+            }
+            resolve();
+          });
+      });
     });
     it('should add the -loop 1 and a time argument (timemark)', () => {
-      new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .loop('00:06:46.81')
-        ._test_getArgs((args, err) => {
-          testhelper.logArgError(err);
-          assert.ok(!err);
+      return new Promise((resolve, reject) => {
+        new Ffmpeg({ source: testfile, logger: testhelper.logger })
+          .loop('00:06:46.81')
+          ._test_getArgs((args, err) => {
+            testhelper.logArgError(err);
+            assert.ok(!err);
 
-          if (args.indexOf('-loop') !== -1 || args.indexOf('-loop_output') !== -1) {
-            expect(args).toContain('-t');
-            expect(args).toContain('00:06:46.81');
-          }
-          else {
-            throw new Error('args should contain loop or loop_output');
-          }
-        });
+            if (args.indexOf('-loop') !== -1 || args.indexOf('-loop_output') !== -1) {
+              expect(args).toContain('-t');
+              expect(args).toContain('00:06:46.81');
+            }
+            else {
+              reject(new Error('args should contain loop or loop_output'));
+            }
+            resolve();
+          });
+      });
     });
   });
 
   describe('takeFrames', () => {
     it('should add the -vframes argument', () => {
-      new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .takeFrames(250)
-        ._test_getArgs((args, err) => {
-          testhelper.logArgError(err);
-          assert.ok(!err);
+      return new Promise((resolve) => {
+        new Ffmpeg({ source: testfile, logger: testhelper.logger })
+          .takeFrames(250)
+          ._test_getArgs((args, err) => {
+            testhelper.logArgError(err);
+            assert.ok(!err);
 
-          expect(args).toContain('-vframes');
-          expect(args).toContain(250);
-        });
+            expect(args).toContain('-vframes');
+            expect(args).toContain(250);
+            resolve();
+          });
+      });
     });
   });
 
   describe('withAudioCodec', () => {
     it('should apply the audio codec argument', () => {
-      new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .withAudioCodec('mp3')
-        ._test_getArgs((args, err) => {
-          testhelper.logArgError(err);
-          assert.ok(!err);
+      return new Promise((resolve) => {
+        new Ffmpeg({ source: testfile, logger: testhelper.logger })
+          .withAudioCodec('mp3')
+          ._test_getArgs((args, err) => {
+            testhelper.logArgError(err);
+            assert.ok(!err);
 
-          expect(args).toContain('-acodec');
-          expect(args).toContain('mp3');
-        });
+            expect(args).toContain('-acodec');
+            expect(args).toContain('mp3');
+            resolve();
+          });
+      });
     });
   });
 
   describe('withAudioFilter', () => {
     it('should apply the audio filter argument', () => {
-      new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .withAudioFilter('silencedetect=n=-50dB:d=5')
-        .withAudioFilter('volume=0.5')
-        .withAudioFilter('multiple=1', 'filters=2')
-        ._test_getArgs((args, err) => {
-          testhelper.logArgError(err);
-          assert.ok(!err);
+      return new Promise((resolve) => {
+        new Ffmpeg({ source: testfile, logger: testhelper.logger })
+          .withAudioFilter('silencedetect=n=-50dB:d=5')
+          .withAudioFilter('volume=0.5')
+          .withAudioFilter('multiple=1', 'filters=2')
+          ._test_getArgs((args, err) => {
+            testhelper.logArgError(err);
+            assert.ok(!err);
 
-          expect(args).toContain('-filter:a');
-          expect(args).toContain('silencedetect=n=-50dB:d=5,volume=0.5,multiple=1,filters=2');
-        });
+            expect(args).toContain('-filter:a');
+            expect(args).toContain('silencedetect=n=-50dB:d=5,volume=0.5,multiple=1,filters=2');
+            resolve();
+          });
+      });
     });
 
     it('should accept filter arrays', () => {
-      new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .withAudioFilter(['multiple=1', 'filters=2'])
-        ._test_getArgs((args, err) => {
-          testhelper.logArgError(err);
-          assert.ok(!err);
+      return new Promise((resolve) => {
+        new Ffmpeg({ source: testfile, logger: testhelper.logger })
+          .withAudioFilter(['multiple=1', 'filters=2'])
+          ._test_getArgs((args, err) => {
+            testhelper.logArgError(err);
+            assert.ok(!err);
 
-          expect(args).toContain('-filter:a');
-          expect(args).toContain('multiple=1,filters=2');
-        });
+            expect(args).toContain('-filter:a');
+            expect(args).toContain('multiple=1,filters=2');
+            resolve();
+          });
+      });
     });
 
     it('should enable using filter objects', () => {
-      new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .withAudioFilter(
-          {
-            filter: 'option_string',
-            options: 'opt1=value1:opt2=value2'
-          },
-          {
-            filter: 'unnamed_options',
-            options: ['opt1', 'opt2']
-          },
-          {
-            filter: 'named_options',
-            options: {
-              opt1: 'value1',
-              opt2: 'value2'
+      return new Promise((resolve) => {
+        new Ffmpeg({ source: testfile, logger: testhelper.logger })
+          .withAudioFilter(
+            {
+              filter: 'option_string',
+              options: 'opt1=value1:opt2=value2'
+            },
+            {
+              filter: 'unnamed_options',
+              options: ['opt1', 'opt2']
+            },
+            {
+              filter: 'named_options',
+              options: {
+                opt1: 'value1',
+                opt2: 'value2'
+              }
             }
-          }
-        )
-        ._test_getArgs((args, err) => {
-          testhelper.logArgError(err);
-          assert.ok(!err);
+          )
+          ._test_getArgs((args, err) => {
+            testhelper.logArgError(err);
+            assert.ok(!err);
 
-          expect(args).toContain('-filter:a');
-          expect(args).toContain('option_string=opt1=value1:opt2=value2,unnamed_options=opt1:opt2,named_options=opt1=value1:opt2=value2');
-        });
+            expect(args).toContain('-filter:a');
+            expect(args).toContain('option_string=opt1=value1:opt2=value2,unnamed_options=opt1:opt2,named_options=opt1=value1:opt2=value2');
+            resolve();
+          });
+      });
     });
   });
 
   describe('withAudioChannels', () => {
     it('should apply the audio channels argument', () => {
-      new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .withAudioChannels(1)
-        ._test_getArgs((args, err) => {
-          testhelper.logArgError(err);
-          assert.ok(!err);
+      return new Promise((resolve) => {
+        new Ffmpeg({ source: testfile, logger: testhelper.logger })
+          .withAudioChannels(1)
+          ._test_getArgs((args, err) => {
+            testhelper.logArgError(err);
+            assert.ok(!err);
 
-          expect(args).toContain('-ac');
-          expect(args).toContain(1);
-        });
+            expect(args).toContain('-ac');
+            expect(args).toContain(1);
+            resolve();
+          });
+      });
     });
   });
 
   describe('withAudioFrequency', () => {
     it('should apply the audio frequency argument', () => {
-      new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .withAudioFrequency(22500)
-        ._test_getArgs((args, err) => {
-          testhelper.logArgError(err);
-          assert.ok(!err);
+      return new Promise((resolve) => {
+        new Ffmpeg({ source: testfile, logger: testhelper.logger })
+          .withAudioFrequency(22500)
+          ._test_getArgs((args, err) => {
+            testhelper.logArgError(err);
+            assert.ok(!err);
 
-          expect(args).toContain('-ar');
-          expect(args).toContain(22500);
-        });
+            expect(args).toContain('-ar');
+            expect(args).toContain(22500);
+            resolve();
+          });
+      });
     });
   });
 
   describe('withAudioQuality', () => {
     it('should apply the audio quality argument', () => {
-      new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .withAudioQuality(5)
-        ._test_getArgs((args, err) => {
-          testhelper.logArgError(err);
-          assert.ok(!err);
+      return new Promise((resolve) => {
+        new Ffmpeg({ source: testfile, logger: testhelper.logger })
+          .withAudioQuality(5)
+          ._test_getArgs((args, err) => {
+            testhelper.logArgError(err);
+            assert.ok(!err);
 
-          expect(args).toContain('-aq');
-          expect(args).toContain(5);
-        });
+            expect(args).toContain('-aq');
+            expect(args).toContain(5);
+            resolve();
+          });
+      });
     });
   });
 
   describe('setStartTime', () => {
     it('should apply the start time offset argument', () => {
-      new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .setStartTime('00:00:10')
-        ._test_getArgs((args, err) => {
-          testhelper.logArgError(err);
-          assert.ok(!err);
+      return new Promise((resolve) => {
+        new Ffmpeg({ source: testfile, logger: testhelper.logger })
+          .setStartTime('00:00:10')
+          ._test_getArgs((args, err) => {
+            testhelper.logArgError(err);
+            assert.ok(!err);
 
-          expect(args).toContain('-ss');
-          expect(args.indexOf('-ss')).toBeLessThan(args.indexOf('-i'));
+            expect(args).toContain('-ss');
+            expect(args.indexOf('-ss')).toBeLessThan(args.indexOf('-i'));
 
-          expect(args.indexOf('00:00:10')).toBeGreaterThan(args.indexOf('-ss'));
-          expect(args.indexOf('00:00:10')).toBeLessThan(args.indexOf('-i'));
-        });
+            expect(args.indexOf('00:00:10')).toBeGreaterThan(args.indexOf('-ss'));
+            expect(args.indexOf('00:00:10')).toBeLessThan(args.indexOf('-i'));
+            resolve();
+          });
+      });
     });
   });
 
   describe('setDuration', () => {
     it('should apply the record duration argument', () => {
-      new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .setDuration(10)
-        ._test_getArgs((args, err) => {
-          testhelper.logArgError(err);
-          assert.ok(!err);
+      return new Promise((resolve) => {
+        new Ffmpeg({ source: testfile, logger: testhelper.logger })
+          .setDuration(10)
+          ._test_getArgs((args, err) => {
+            testhelper.logArgError(err);
+            assert.ok(!err);
 
-          expect(args).toContain('-t');
-          expect(args).toContain(10);
-        });
+            expect(args).toContain('-t');
+            expect(args).toContain(10);
+            resolve();
+          });
+      });
     });
   });
 
   describe('addOption(s)', () => {
     it('should apply a single option', () => {
-      new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .addOption('-ab', '256k')
-        ._test_getArgs((args, err) => {
-          testhelper.logArgError(err);
-          assert.ok(!err);
+      return new Promise((resolve) => {
+        new Ffmpeg({ source: testfile, logger: testhelper.logger })
+          .addOption('-ab', '256k')
+          ._test_getArgs((args, err) => {
+            testhelper.logArgError(err);
+            assert.ok(!err);
 
-          expect(args).toContain('-ab');
-          expect(args).toContain('256k');
-        });
+            expect(args).toContain('-ab');
+            expect(args).toContain('256k');
+            resolve();
+          });
+      });
     });
     it('should apply supplied extra options', () => {
-      new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .addOptions(['-flags', '+loop', '-cmp', '+chroma', '-partitions', '+parti4x4+partp8x8+partb8x8'])
-        .addOptions('-single option')
-        .addOptions('-multiple', '-options')
-        ._test_getArgs((args, err) => {
-          testhelper.logArgError(err);
-          assert.ok(!err);
+      return new Promise((resolve) => {
+        new Ffmpeg({ source: testfile, logger: testhelper.logger })
+          .addOptions(['-flags', '+loop', '-cmp', '+chroma', '-partitions', '+parti4x4+partp8x8+partb8x8'])
+          .addOptions('-single option')
+          .addOptions('-multiple', '-options')
+          ._test_getArgs((args, err) => {
+            testhelper.logArgError(err);
+            assert.ok(!err);
 
-          expect(args).toContain('-flags');
-          expect(args).toContain('+loop');
-          expect(args).toContain('-cmp');
-          expect(args).toContain('+chroma');
-          expect(args).toContain('-partitions');
-          expect(args).toContain('+parti4x4+partp8x8+partb8x8');
-          expect(args).toContain('-single');
-          expect(args).toContain('option');
-          expect(args).toContain('-multiple');
-          expect(args).toContain('-options');
-        });
+            expect(args).toContain('-flags');
+            expect(args).toContain('+loop');
+            expect(args).toContain('-cmp');
+            expect(args).toContain('+chroma');
+            expect(args).toContain('-partitions');
+            expect(args).toContain('+parti4x4+partp8x8+partb8x8');
+            expect(args).toContain('-single');
+            expect(args).toContain('option');
+            expect(args).toContain('-multiple');
+            expect(args).toContain('-options');
+            resolve();
+          });
+      });
     });
     it('should apply a single input option', () => {
-      new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .addInputOption('-r', '29.97')
-        ._test_getArgs((args, err) => {
-          testhelper.logArgError(err);
-          assert.ok(!err);
+      return new Promise((resolve) => {
+        new Ffmpeg({ source: testfile, logger: testhelper.logger })
+          .addInputOption('-r', '29.97')
+          ._test_getArgs((args, err) => {
+            testhelper.logArgError(err);
+            assert.ok(!err);
 
-          const joined = args.join(' ');
-          expect(joined).toContain('-r 29.97')
-          expect(joined.indexOf('-r 29.97')).toBeLessThan(joined.indexOf('-i '))
-        });
+            const joined = args.join(' ');
+            expect(joined).toContain('-r 29.97')
+            expect(joined.indexOf('-r 29.97')).toBeLessThan(joined.indexOf('-i '))
+            resolve();
+          });
+      });
     });
     it('should apply multiple input options', () => {
-      new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .addInputOptions(['-r 29.97', '-f ogg'])
-        .addInputOptions('-single option')
-        .addInputOptions('-multiple', '-options')
-        ._test_getArgs((args, err) => {
-          testhelper.logArgError(err);
-          assert.ok(!err);
+      return new Promise((resolve) => {
+        new Ffmpeg({ source: testfile, logger: testhelper.logger })
+          .addInputOptions(['-r 29.97', '-f ogg'])
+          .addInputOptions('-single option')
+          .addInputOptions('-multiple', '-options')
+          ._test_getArgs((args, err) => {
+            testhelper.logArgError(err);
+            assert.ok(!err);
 
-          const joined = args.join(' ');
-          expect(joined.indexOf('-r 29.97')).toBeGreaterThan(-1).and.toBeLessThan(joined.indexOf('-i'));
-          expect(joined.indexOf('-f ogg')).toBeGreaterThan(-1).and.toBeLessThan(joined.indexOf('-i'));
-          expect(joined.indexOf('-single option')).toBeGreaterThan(-1).and.toBeLessThan(joined.indexOf('-i'));
-          expect(joined.indexOf('-multiple')).toBeGreaterThan(-1).and.toBeLessThan(joined.indexOf('-i'));
-          expect(joined.indexOf('-options')).toBeGreaterThan(-1).and.toBeLessThan(joined.indexOf('-i'));
-        });
+            const joined = args.join(' ');
+            expect(joined.indexOf('-r 29.97')).toBeGreaterThan(-1).and.toBeLessThan(joined.indexOf('-i'));
+            expect(joined.indexOf('-f ogg')).toBeGreaterThan(-1).and.toBeLessThan(joined.indexOf('-i'));
+            expect(joined.indexOf('-single option')).toBeGreaterThan(-1).and.toBeLessThan(joined.indexOf('-i'));
+            expect(joined.indexOf('-multiple')).toBeGreaterThan(-1).and.toBeLessThan(joined.indexOf('-i'));
+            expect(joined.indexOf('-options')).toBeGreaterThan(-1).and.toBeLessThan(joined.indexOf('-i'));
+            resolve();
+          });
+      });
     });
   });
 
   describe('toFormat', () => {
     it('should apply the target format', () => {
-      new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .toFormat('mp4')
-        ._test_getArgs((args, err) => {
-          testhelper.logArgError(err);
-          assert.ok(!err);
+      return new Promise((resolve) => {
+        new Ffmpeg({ source: testfile, logger: testhelper.logger })
+          .toFormat('mp4')
+          ._test_getArgs((args, err) => {
+            testhelper.logArgError(err);
+            assert.ok(!err);
 
-          expect(args).toContain('-f');
-          expect(args).toContain('mp4');
-        });
+            expect(args).toContain('-f');
+            expect(args).toContain('mp4');
+            resolve();
+          });
+      });
     });
   });
 
@@ -1038,30 +1148,36 @@ describe('Command', () => {
     });
 
     it('should duplicate FfmpegCommand options at the time of the call', () => {
-      var command = new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .preset('flashvideo');
+      return new Promise((resolve) => {
+        var command = new Ffmpeg({ source: testfile, logger: testhelper.logger })
+          .preset('flashvideo');
 
-      var clone = command.clone();
+        var clone = command.clone();
 
-      command._test_getArgs((originalArgs) => {
-        clone._test_getArgs((cloneArgs) => {
-          expect(cloneArgs).toHaveLength(originalArgs.length);
-          originalArgs.forEach((arg, index) => {
-            expect(cloneArgs[index]).toEqual(arg);
+        command._test_getArgs((originalArgs) => {
+          clone._test_getArgs((cloneArgs) => {
+            expect(cloneArgs).toHaveLength(originalArgs.length);
+            originalArgs.forEach((arg, index) => {
+              expect(cloneArgs[index]).toEqual(arg);
+            });
+            resolve();
           });
         });
       });
     });
 
     it('should have separate argument lists', () => {
-      var command = new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .preset('flashvideo');
+      return new Promise((resolve) => {
+        var command = new Ffmpeg({ source: testfile, logger: testhelper.logger })
+          .preset('flashvideo');
 
-      var clone = command.clone().audioFrequency(22050);
+        var clone = command.clone().audioFrequency(22050);
 
-      command._test_getArgs((originalArgs) => {
-        clone._test_getArgs((cloneArgs) => {
-          expect(cloneArgs).toHaveLength(originalArgs.length + 2);
+        command._test_getArgs((originalArgs) => {
+          clone._test_getArgs((cloneArgs) => {
+            expect(cloneArgs).toHaveLength(originalArgs.length + 2);
+            resolve();
+          });
         });
       });
     });
