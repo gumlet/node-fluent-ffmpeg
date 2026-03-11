@@ -28,6 +28,7 @@
   "repository": "git@github.com:gumlet/node-fluent-ffmpeg.git",
   "devDependencies": {
     "@biomejs/biome": "^2.4.6",
+    "@vitest/coverage-v8": "^4.0.18",
     "jsdoc": "^4.0.0",
     "should": "^13.0.0",
     "vitest": "^4.0.18"
