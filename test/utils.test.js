@@ -1,6 +1,6 @@
 /*jshint node:true*/
 /*global describe,it*/
-
+import { expect, describe, it } from 'vitest';
 
 import utils from '../lib/utils.js';
 
@@ -15,7 +15,7 @@ describe('Utilities', () => {
       args('-three', 'three-param1', 'three-param2');
       args(['-four', 'four-param', '-five', '-five-param']);
 
-      args.get().length.should.equal(10);
+      expect(args.get()).toHaveLength(10);
     });
 
     it('Should return the argument list', () => {
@@ -27,10 +27,10 @@ describe('Utilities', () => {
       args(['-four', 'four-param', '-five', '-five-param']);
 
       var arr = args.get();
-      Array.isArray(arr).should.equal(true);
-      arr.length.should.equal(10);
-      arr.indexOf('-three').should.equal(3);
-      arr.indexOf('four-param').should.equal(7);
+      expect(Array.isArray(arr)).toBe(true);
+      expect(arr).toHaveLength(10);
+      expect(arr).toContain('-three');
+      expect(arr).toContain('four-param');
     });
 
     it('Should clear the argument list', () => {
@@ -42,7 +42,7 @@ describe('Utilities', () => {
       args(['-four', 'four-param', '-five', '-five-param']);
       args.clear();
 
-      args.get().length.should.equal(0);
+      expect(args.get()).toHaveLength(0);
     });
 
     it('Should retrieve arguments from the list', () => {
@@ -54,22 +54,22 @@ describe('Utilities', () => {
       args(['-four', 'four-param', '-five', '-five-param']);
 
       var one = args.find('-one');
-      Array.isArray(one).should.equal(true);
-      one.length.should.equal(0);
+      expect(Array.isArray(one)).toBe(true);
+      expect(one).toHaveLength(0);
 
       var two = args.find('-two', 1);
-      Array.isArray(two).should.equal(true);
-      two.length.should.equal(1);
-      two[0].should.equal('two-param');
+      expect(Array.isArray(two)).toBe(true);
+      expect(two).toHaveLength(1);
+      expect(two[0]).toBe('two-param');
 
       var three = args.find('-three', 2);
-      Array.isArray(three).should.equal(true);
-      three.length.should.equal(2);
-      three[0].should.equal('three-param1');
-      three[1].should.equal('three-param2');
+      expect(Array.isArray(three)).toBe(true);
+      expect(three).toHaveLength(2);
+      expect(three[0]).toBe('three-param1');
+      expect(three[1]).toBe('three-param2');
 
       var nope = args.find('-nope', 2);
-      (typeof nope).should.equal('undefined');
+      expect(nope).toBeUndefined();
     });
 
     it('Should remove arguments from the list', () => {
@@ -82,35 +82,35 @@ describe('Utilities', () => {
 
       args.remove('-four', 1);
       var arr = args.get();
-      arr.length.should.equal(8);
-      arr[5].should.equal('three-param2');
-      arr[6].should.equal('-five');
+      expect(arr).toHaveLength(8);
+      expect(arr[5]).toBe('three-param2');
+      expect(arr[6]).toBe('-five');
 
       args.remove('-one');
       arr = args.get();
-      arr.length.should.equal(7);
-      arr[0].should.equal('-two');
+      expect(arr).toHaveLength(7);
+      expect(arr[0]).toBe('-two');
 
       args.remove('-three', 2);
       arr = args.get();
-      arr.length.should.equal(4);
-      arr[1].should.equal('two-param');
-      arr[2].should.equal('-five');
+      expect(arr).toHaveLength(4);
+      expect(arr[1]).toBe('two-param');
+      expect(arr[2]).toBe('-five');
     });
   });
 
   describe('timemarkToSeconds', () => {
     it('should correctly convert a simple timestamp', () => {
-      utils.timemarkToSeconds('00:02:00.00').should.be.equal(120);
+      expect(utils.timemarkToSeconds('00:02:00.00')).toBe(120);
     });
     it('should correctly convert a complex timestamp', () => {
-      utils.timemarkToSeconds('00:08:09.10').should.be.equal(489.1);
+      expect(utils.timemarkToSeconds('00:08:09.10')).toBe(489.1);
     });
     it('should correclty convert a simple float string timestamp', () => {
-      utils.timemarkToSeconds('132.44').should.be.equal(132.44);
+      expect(utils.timemarkToSeconds('132.44')).toBe(132.44);
     });
     it('should correclty convert a simple float timestamp', () => {
-      utils.timemarkToSeconds(132.44).should.be.equal(132.44);
+      expect(utils.timemarkToSeconds(132.44)).toBe(132.44);
     });
   });
 
@@ -119,7 +119,7 @@ describe('Utilities', () => {
       var ring = utils.linesRing(100);
       ring.append('foo\nbar\nbaz\n');
       ring.append('foo\nbar\nbaz\n');
-      ring.get().should.equal('foo\nbar\nbaz\nfoo\nbar\nbaz\n');
+      expect(ring.get()).toBe('foo\nbar\nbaz\nfoo\nbar\nbaz\n');
     });
 
     it('should append partial lines', () => {
@@ -127,7 +127,7 @@ describe('Utilities', () => {
       ring.append('foo');
       ring.append('bar\nbaz');
       ring.append('moo');
-      ring.get().should.equal('foobar\nbazmoo');
+      expect(ring.get()).toBe('foobar\nbazmoo');
     });
 
     it('should call line callbacks', () => {
@@ -146,22 +146,22 @@ describe('Utilities', () => {
       ring.callback(cb2);
 
       ring.append('foo\nbar\nbaz');
-      lines.length.should.equal(2);
-      lines[0].should.equal('foo');
-      lines[1].should.equal('bar');
+      expect(lines).toHaveLength(2);
+      expect(lines[0]).toBe('foo');
+      expect(lines[1]).toBe('bar');
 
-      lines2.length.should.equal(2);
-      lines2[0].should.equal('foo');
-      lines2[1].should.equal('bar');
+      expect(lines2).toHaveLength(2);
+      expect(lines2[0]).toBe('foo');
+      expect(lines2[1]).toBe('bar');
 
       ring.append('moo\nmeow\n');
-      lines.length.should.equal(4);
-      lines[2].should.equal('bazmoo');
-      lines[3].should.equal('meow');
+      expect(lines).toHaveLength(4);
+      expect(lines[2]).toBe('bazmoo');
+      expect(lines[3]).toBe('meow');
 
-      lines2.length.should.equal(4);
-      lines2[2].should.equal('bazmoo');
-      lines2[3].should.equal('meow');
+      expect(lines2).toHaveLength(4);
+      expect(lines2[2]).toBe('bazmoo');
+      expect(lines2[3]).toBe('meow');
     });
 
     it('should close correctly', () => {
@@ -174,33 +174,33 @@ describe('Utilities', () => {
       ring.callback(cb);
 
       ring.append('foo\nbar\nbaz');
-      lines.length.should.equal(2);
-      lines[0].should.equal('foo');
-      lines[1].should.equal('bar');
+      expect(lines).toHaveLength(2);
+      expect(lines[0]).toBe('foo');
+      expect(lines[1]).toBe('bar');
 
       ring.close();
-      lines.length.should.equal(3);
-      lines[2].should.equal('baz');
+      expect(lines).toHaveLength(3);
+      expect(lines[2]).toBe('baz');
 
       ring.append('moo\nmeow\n');
-      lines.length.should.equal(3);
-      ring.get().should.equal('foo\nbar\nbaz');
+      expect(lines).toHaveLength(3);
+      expect(ring.get()).toBe('foo\nbar\nbaz');
     });
 
     it('should limit lines', () => {
       var ring = utils.linesRing(2);
       ring.append('foo\nbar\nbaz');
-      ring.get().should.equal('bar\nbaz');
+      expect(ring.get()).toBe('bar\nbaz');
       ring.append('foo\nbar');
-      ring.get().should.equal('bazfoo\nbar');
+      expect(ring.get()).toBe('bazfoo\nbar');
     });
 
     it('should allow unlimited lines', () => {
       var ring = utils.linesRing(0);
       ring.append('foo\nbar\nbaz');
-      ring.get().should.equal('foo\nbar\nbaz');
+      expect(ring.get()).toBe('foo\nbar\nbaz');
       ring.append('foo\nbar');
-      ring.get().should.equal('foo\nbar\nbazfoo\nbar');
+      expect(ring.get()).toBe('foo\nbar\nbazfoo\nbar');
     });
   });
 });

@@ -1,6 +1,6 @@
 /*jshint node:true*/
 /*global describe,it,before*/
-
+import { expect, describe, it, beforeAll } from 'vitest';
 
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
@@ -16,124 +16,113 @@ import testhelper from './helpers.js';
 
 
 describe('Metadata', () => {
-  before(function(done) {
+  let testfile
+  beforeAll(function() {
     // check for ffmpeg installation
-    this.testfile = path.join(__dirname, 'assets', 'testvideo-43.avi');
+    testfile = path.join(__dirname, 'assets', 'testvideo-43.avi');
     exec(testhelper.getFfmpegCheck(), (err) => {
       if (!err) {
         // check if file exists
-        fs.access(this.testfile, fs.constants.F_OK, (err) => {
+        fs.access(testfile, fs.constants.F_OK, (err) => {
           if (!err) {
-            done();
+            // all good, file exists and ffmpeg is available
           } else {
-            done(new Error(`test video file does not exist, check path (${this.testfile})`));
+            throw new Error(`test video file does not exist, check path (${this.testfile})`);
           }
         });
       } else {
-        done(new Error('cannot run test without ffmpeg installed, aborting test...'));
+        throw new Error('cannot run test without ffmpeg installed, aborting test...');
       }
     });
   });
 
-  it('should provide an ffprobe entry point', (done) => {
-    (typeof Ffmpeg.ffprobe).should.equal('function');
-    done();
+  it('should provide an ffprobe entry point', () => {
+    expect(Ffmpeg.ffprobe).toBeTypeOf('function');
   });
 
-  it('should return ffprobe data as an object', function(done) {
-    Ffmpeg.ffprobe(this.testfile, (err, data) => {
+  it('should return ffprobe data as an object', () => {
+    Ffmpeg.ffprobe(testfile, (err, data) => {
       testhelper.logError(err);
       assert.ok(!err);
 
-      (typeof data).should.equal('object');
-      done();
+      expect(data).toBeTypeOf('object')
     });
   });
 
-  it('should provide ffprobe format information', function(done) {
-    Ffmpeg.ffprobe(this.testfile, (err, data) => {
+  it('should provide ffprobe format information', () => {
+    Ffmpeg.ffprobe(testfile, (err, data) => {
       testhelper.logError(err);
       assert.ok(!err);
 
-      ('format' in data).should.equal(true);
-      (typeof data.format).should.equal('object');
-      Number(data.format.duration).should.equal(2);
-      data.format.format_name.should.equal('avi');
-
-      done();
+      expect('format' in data).toBe(true);
+      expect(typeof data.format).toBe('object');
+      expect(Number(data.format.duration)).toBe(2);
+      expect(data.format.format_name).toBe('avi');
     });
   });
 
-  it('should provide ffprobe stream information', function(done) {
-    Ffmpeg.ffprobe(this.testfile, (err, data) => {
+  it('should provide ffprobe stream information', () => {
+    Ffmpeg.ffprobe(testfile, (err, data) => {
       testhelper.logError(err);
       assert.ok(!err);
 
-      ('streams' in data).should.equal(true);
-      Array.isArray(data.streams).should.equal(true);
-      data.streams.length.should.equal(1);
-      data.streams[0].codec_type.should.equal('video');
-      data.streams[0].codec_name.should.equal('mpeg4');
-      Number(data.streams[0].width).should.equal(1024);
-
-      done();
+      expect('streams' in data).toBe(true);
+      expect(Array.isArray(data.streams)).toBe(true);
+      expect(data.streams.length).toBe(1);
+      expect(data.streams[0].codec_type).toBe('video');
+      expect(data.streams[0].codec_name).toBe('mpeg4');
+      expect(Number(data.streams[0].width)).toBe(1024);
     });
   });
 
-  it('should provide ffprobe stream information with units', function(done) {
-    Ffmpeg.ffprobe(this.testfile, ['-unit'], (err, data) => {
+  it('should provide ffprobe stream information with units', () => {
+    Ffmpeg.ffprobe(testfile, ['-unit'], (err, data) => {
       testhelper.logError(err);
       assert.ok(!err);
 
-      ('streams' in data).should.equal(true);
-      Array.isArray(data.streams).should.equal(true);
-      data.streams.length.should.equal(1);
-      data.streams[0].bit_rate.should.equal('322427 bit/s');
-      done();
+      expect('streams' in data).toBe(true);
+      expect(Array.isArray(data.streams)).toBe(true);
+      expect(data.streams.length).toBe(1);
+      expect(data.streams[0].bit_rate).toBe('322427 bit/s');
     });
   });
 
-  it('should return ffprobe errors', (done) => {
+  it('should return ffprobe errors', () => {
     Ffmpeg.ffprobe('/path/to/missing/file', (err) => {
       assert.ok(!!err);
-      done();
     });
   });
 
-  it('should enable calling ffprobe on a command with an input file', function(done) {
-    new Ffmpeg({ source: this.testfile })
+  it('should enable calling ffprobe on a command with an input file', () => {
+    new Ffmpeg({ source: testfile })
       .ffprobe((err, data) => {
         testhelper.logError(err);
         assert.ok(!err);
 
-        (typeof data).should.equal('object');
-        ('format' in data).should.equal(true);
-        (typeof data.format).should.equal('object');
-        ('streams' in data).should.equal(true);
-        Array.isArray(data.streams).should.equal(true);
-
-        done();
+        expect(typeof data).toBe('object');
+        expect('format' in data).toBe(true);
+        expect(typeof data.format).toBe('object');
+        expect('streams' in data).toBe(true);
+        expect(Array.isArray(data.streams)).toBe(true);
       });
   });
 
-  it('should fail calling ffprobe on a command without input', (done) => {
+  it('should fail calling ffprobe on a command without input', () => {
     new Ffmpeg().ffprobe((err) => {
       assert.ok(!!err);
-      err.message.should.match(/No input specified/);
-      done();
+      expect(err.message).toMatch(/No input specified/);
     });
   });
 
-  it('should allow calling ffprobe on stream input', function(done) {
-    var stream = fs.createReadStream(this.testfile);
+  it('should allow calling ffprobe on stream input', () => {
+    var stream = fs.createReadStream(testfile);
 
     new Ffmpeg()
       .addInput(stream)
       .ffprobe((err, data) => {
         assert.ok(!err);
-        data.streams.length.should.equal(1);
-        data.format.filename.should.equal('pipe:0');
-        done();
+        expect(data.streams.length).toBe(1);
+        expect(data.format.filename).toBe('pipe:0');
       });
   });
 });

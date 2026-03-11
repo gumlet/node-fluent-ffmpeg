@@ -1,6 +1,6 @@
 /*jshint node:true*/
 /*global describe,it,beforeEach,afterEach,after*/
-
+import { expect, describe, it, beforeEach, afterEach, afterAll } from 'vitest';
 
 import Ffmpeg from '../index.js';
 import path from 'node:path';
@@ -15,121 +15,115 @@ const PATH_DELIMITER = path.delimiter || (platform().match(/win(32|64)/) ? ';' :
 
 describe('Capabilities', () => {
   describe('ffmpeg capabilities', () => {
-    it('should enable querying for available codecs', (done) => {
+    it('should enable querying for available codecs', () => {
       new Ffmpeg({ source: '' }).getAvailableCodecs((err, codecs) => {
         testhelper.logError(err);
         assert.ok(!err);
 
-        (typeof codecs).should.equal('object');
-        Object.keys(codecs).length.should.not.equal(0);
+        expect(typeof codecs).toBe('object');
+        expect(Object.keys(codecs).length).not.toBe(0);
 
-        ('pcm_s16le' in codecs).should.equal(true);
-        ('type' in codecs.pcm_s16le).should.equal(true);
-        (typeof codecs.pcm_s16le.type).should.equal('string');
-        ('description' in codecs.pcm_s16le).should.equal(true);
-        (typeof codecs.pcm_s16le.description).should.equal('string');
-        ('canEncode' in codecs.pcm_s16le).should.equal(true);
-        (typeof codecs.pcm_s16le.canEncode).should.equal('boolean');
-        ('canDecode' in codecs.pcm_s16le).should.equal(true);
-        (typeof codecs.pcm_s16le.canDecode).should.equal('boolean');
-
-        done();
+        expect('pcm_s16le' in codecs).toBe(true);
+        expect('type' in codecs.pcm_s16le).toBe(true);
+        expect(typeof codecs.pcm_s16le.type).toBe('string');
+        expect('description' in codecs.pcm_s16le).toBe(true);
+        expect(typeof codecs.pcm_s16le.description).toBe('string');
+        expect('canEncode' in codecs.pcm_s16le).toBe(true);
+        expect(typeof codecs.pcm_s16le.canEncode).toBe('boolean');
+        expect('canDecode' in codecs.pcm_s16le).toBe(true);
+        expect(typeof codecs.pcm_s16le.canDecode).toBe('boolean');
       });
     });
 
-    it('should enable querying for available encoders', (done) => {
+    it('should enable querying for available encoders', () => {
       new Ffmpeg({ source: '' }).getAvailableEncoders((err, encoders) => {
         testhelper.logError(err);
         assert.ok(!err);
 
-        (typeof encoders).should.equal('object');
-        Object.keys(encoders).length.should.not.equal(0);
+        expect(typeof encoders).toBe('object');
+        expect(Object.keys(encoders).length).not.toBe(0);
 
-        ('pcm_s16le' in encoders).should.equal(true);
-        ('type' in encoders.pcm_s16le).should.equal(true);
-        (typeof encoders.pcm_s16le.type).should.equal('string');
-        ('description' in encoders.pcm_s16le).should.equal(true);
-        (typeof encoders.pcm_s16le.description).should.equal('string');
-        ('experimental' in encoders.pcm_s16le).should.equal(true);
-        (typeof encoders.pcm_s16le.experimental).should.equal('boolean');
+        expect('pcm_s16le' in encoders).toBe(true);
+        expect('type' in encoders.pcm_s16le).toBe(true);
+        expect(typeof encoders.pcm_s16le.type).toBe('string');
+        expect('description' in encoders.pcm_s16le).toBe(true);
+        expect(typeof encoders.pcm_s16le.description).toBe('string');
+        expect('experimental' in encoders.pcm_s16le).toBe(true);
+        expect(typeof encoders.pcm_s16le.experimental).toBe('boolean');
 
-        done();
       });
     });
 
-    it('should enable querying for available formats', (done) => {
+    it('should enable querying for available formats', () => {
       new Ffmpeg({ source: '' }).getAvailableFormats((err, formats) => {
         testhelper.logError(err);
         assert.ok(!err);
 
-        (typeof formats).should.equal('object');
-        Object.keys(formats).length.should.not.equal(0);
+        expect(typeof formats).toBe('object');
+        expect(Object.keys(formats).length).not.toBe(0);
 
-        ('wav' in formats).should.equal(true);
-        ('description' in formats.wav).should.equal(true);
-        (typeof formats.wav.description).should.equal('string');
-        ('canMux' in formats.wav).should.equal(true);
-        (typeof formats.wav.canMux).should.equal('boolean');
-        ('canDemux' in formats.wav).should.equal(true);
-        (typeof formats.wav.canDemux).should.equal('boolean');
+        expect('wav' in formats).toBe(true);
+        expect('description' in formats.wav).toBe(true);
+        expect(typeof formats.wav.description).toBe('string');
+        expect('canMux' in formats.wav).toBe(true);
+        expect(typeof formats.wav.canMux).toBe('boolean');
+        expect('canDemux' in formats.wav).toBe(true);
+        expect(typeof formats.wav.canDemux).toBe('boolean');
 
-        done();
       });
     });
 
-    it('should enable querying for available filters', (done) => {
+    it('should enable querying for available filters', () => {
       new Ffmpeg({ source: '' }).getAvailableFilters((err, filters) => {
         testhelper.logError(err);
         assert.ok(!err);
 
-        (typeof filters).should.equal('object');
-        Object.keys(filters).length.should.not.equal(0);
+        expect(typeof filters).toBe('object');
+        expect(Object.keys(filters).length).not.toBe(0);
 
-        ('anull' in filters).should.equal(true);
-        ('description' in filters.anull).should.equal(true);
-        (typeof filters.anull.description).should.equal('string');
-        ('input' in filters.anull).should.equal(true);
-        (typeof filters.anull.input).should.equal('string');
-        ('output' in filters.anull).should.equal(true);
-        (typeof filters.anull.output).should.equal('string');
-        ('multipleInputs' in filters.anull).should.equal(true);
-        (typeof filters.anull.multipleInputs).should.equal('boolean');
-        ('multipleOutputs' in filters.anull).should.equal(true);
-        (typeof filters.anull.multipleOutputs).should.equal('boolean');
+        expect('anull' in filters).toBe(true);
+        expect('description' in filters.anull).toBe(true);
+        expect(typeof filters.anull.description).toBe('string');
+        expect('input' in filters.anull).toBe(true);
+        expect(typeof filters.anull.input).toBe('string');
+        expect('output' in filters.anull).toBe(true);
+        expect(typeof filters.anull.output).toBe('string');
+        expect('multipleInputs' in filters.anull).toBe(true);
+        expect(typeof filters.anull.multipleInputs).toBe('boolean');
+        expect('multipleOutputs' in filters.anull).toBe(true);
+        expect(typeof filters.anull.multipleOutputs).toBe('boolean');
 
-        done();
       });
     });
 
-    it('should enable querying capabilities without instanciating a command', (done) => {
+    it('should enable querying capabilities without instanciating a command', () => {
       Ffmpeg.getAvailableCodecs((err, codecs) => {
         testhelper.logError(err);
         assert.ok(!err);
 
-        (typeof codecs).should.equal('object');
-        Object.keys(codecs).length.should.not.equal(0);
+        expect(typeof codecs).toBe('object');
+        expect(Object.keys(codecs).length).not.toBe(0);
 
         Ffmpeg.getAvailableFilters((err, filters) => {
           testhelper.logError(err);
           assert.ok(!err);
 
-          (typeof filters).should.equal('object');
-          Object.keys(filters).length.should.not.equal(0);
+          expect(filters).toBeTypeOf('object');
+          expect(Object.keys(filters).length).not.toBe(0);
 
           Ffmpeg.getAvailableFormats((err, formats) => {
             testhelper.logError(err);
             assert.ok(!err);
 
-            (typeof formats).should.equal('object');
-            Object.keys(formats).length.should.not.equal(0);
+            expect(typeof formats).toBe('object');
+            expect(Object.keys(formats).length).not.toBe(0);
 
-            done();
           });
         });
       });
     });
 
-    it('should enable checking command arguments for available codecs, formats and encoders', (done) => {
+    it('should enable checking command arguments for available codecs, formats and encoders', () => {
       async.waterfall([
         // Check with everything available
         (cb) => {
@@ -150,7 +144,7 @@ describe('Capabilities', () => {
             .toFormat('mp4')
             ._checkCapabilities((err) => {
               assert.ok(!!err);
-              err.message.should.match(/Input format invalid-input-format is not available/);
+              expect(err.message).toMatch(/Input format invalid-input-format is not available/);
 
               cb();
             });
@@ -165,7 +159,7 @@ describe('Capabilities', () => {
             .toFormat('invalid-output-format')
             ._checkCapabilities((err) => {
               assert.ok(!!err);
-              err.message.should.match(/Output format invalid-output-format is not available/);
+              expect(err.message).toMatch(/Output format invalid-output-format is not available/);
 
               cb();
             });
@@ -180,7 +174,7 @@ describe('Capabilities', () => {
             .toFormat('mp4')
             ._checkCapabilities((err) => {
               assert.ok(!!err);
-              err.message.should.match(/Audio codec invalid-audio-codec is not available/);
+              expect(err.message).toMatch(/Audio codec invalid-audio-codec is not available/);
 
               cb();
             });
@@ -195,7 +189,7 @@ describe('Capabilities', () => {
             .toFormat('mp4')
             ._checkCapabilities((err) => {
               assert.ok(!!err);
-              err.message.should.match(/Video codec invalid-video-codec is not available/);
+              expect(err.message).toMatch(/Video codec invalid-video-codec is not available/);
 
               cb();
             });
@@ -211,7 +205,7 @@ describe('Capabilities', () => {
             .toFormat('mp4')
             ._checkCapabilities((err) => {
               assert.ok(!!err);
-              err.message.should.match(/Audio codec png is not available/);
+              expect(err.message).toMatch(/Audio codec png is not available/);
 
               cb();
             });
@@ -227,7 +221,7 @@ describe('Capabilities', () => {
             .toFormat('mp4')
             ._checkCapabilities((err) => {
               assert.ok(!!err);
-              err.message.should.match(/Video codec pcm_u16le is not available/);
+              expect(err.message).toMatch(/Video codec pcm_u16le is not available/);
 
               cb();
             });
@@ -235,16 +229,13 @@ describe('Capabilities', () => {
       ], (err) => {
         testhelper.logError(err);
         assert.ok(!err);
-
-        done();
       });
     });
 
-    it('should check capabilities before running a command', (done) => {
+    it('should check capabilities before running a command', () => {
       new Ffmpeg('/path/to/file.avi')
         .on('error', (err) => {
-          err.message.should.match(/Output format invalid-output-format is not available/);
-          done();
+          expect(err.message).toMatch(/Output format invalid-output-format is not available/);
         })
         .toFormat('invalid-output-format')
         .saveToFile('/tmp/will-not-be-created.mp4');
@@ -273,12 +264,12 @@ describe('Capabilities', () => {
       process.env.FFMPEG_PATH = FFMPEG_PATH;
     });
 
-    after(() => {
+    afterAll(() => {
       // Forget paths after all tests
       (new Ffmpeg())._forgetPaths();
     });
 
-    it('should allow manual definition of ffmpeg binary path', (done) => {
+    it('should allow manual definition of ffmpeg binary path', () => {
       var ff = new Ffmpeg();
 
       ff.setFfmpegPath('/doom/di/dom');
@@ -286,12 +277,11 @@ describe('Capabilities', () => {
         testhelper.logError(err);
         assert.ok(!err);
 
-        ffmpeg.should.equal('/doom/di/dom');
-        done();
+        expect(ffmpeg).toBe('/doom/di/dom');
       });
     });
 
-    it('should allow static manual definition of ffmpeg binary path', (done) => {
+    it('should allow static manual definition of ffmpeg binary path', () => {
       var ff = new Ffmpeg();
 
       Ffmpeg.setFfmpegPath('/doom/di/dom2');
@@ -299,12 +289,11 @@ describe('Capabilities', () => {
         testhelper.logError(err);
         assert.ok(!err);
 
-        ffmpeg.should.equal('/doom/di/dom2');
-        done();
+        expect(ffmpeg).toBe('/doom/di/dom2');
       });
     });
 
-    it('should look for ffmpeg in the PATH if FFMPEG_PATH is not defined', (done) => {
+    it('should look for ffmpeg in the PATH if FFMPEG_PATH is not defined', () => {
       var ff = new Ffmpeg();
 
       delete process.env.FFMPEG_PATH;
@@ -314,16 +303,15 @@ describe('Capabilities', () => {
         testhelper.logError(err);
         assert.ok(!err);
 
-        ffmpeg.should.instanceOf(String);
-        ffmpeg.length.should.above(0);
+        expect(typeof ffmpeg).toBe('string');
+        expect(ffmpeg.length).toBeGreaterThan(0);
 
         var paths = process.env.PATH.split(PATH_DELIMITER);
-        paths.indexOf(path.dirname(ffmpeg)).should.above(-1);
-        done();
+        expect(paths.indexOf(path.dirname(ffmpeg))).toBeGreaterThan(-1);
       });
     });
 
-    (skipAltTest ? it.skip : it)('should use FFMPEG_PATH if defined and valid', (done) => {
+    (skipAltTest ? it.skip : it)('should use FFMPEG_PATH if defined and valid', () => {
       var ff = new Ffmpeg();
 
       process.env.FFMPEG_PATH = ALT_FFMPEG_PATH;
@@ -333,12 +321,11 @@ describe('Capabilities', () => {
         testhelper.logError(err);
         assert.ok(!err);
 
-        ffmpeg.should.equal(ALT_FFMPEG_PATH);
-        done();
+        expect(ffmpeg).toBe(ALT_FFMPEG_PATH);
       });
     });
 
-    it('should fall back to searching in the PATH if FFMPEG_PATH is invalid', (done) => {
+    it('should fall back to searching in the PATH if FFMPEG_PATH is invalid', () => {
       var ff = new Ffmpeg();
 
       process.env.FFMPEG_PATH = '/nope/not-here/nothing-to-see-here';
@@ -348,16 +335,15 @@ describe('Capabilities', () => {
         testhelper.logError(err);
         assert.ok(!err);
 
-        ffmpeg.should.instanceOf(String);
-        ffmpeg.length.should.above(0);
+        expect(typeof ffmpeg).toBe('string');
+        expect(ffmpeg.length).toBeGreaterThan(0);
 
         var paths = process.env.PATH.split(PATH_DELIMITER);
-        paths.indexOf(path.dirname(ffmpeg)).should.above(-1);
-        done();
+        expect(paths.indexOf(path.dirname(ffmpeg))).toBeGreaterThan(-1);
       });
     });
 
-    it('should remember ffmpeg path', (done) => {
+    it('should remember ffmpeg path', () => {
       var ff = new Ffmpeg();
 
       delete process.env.FFMPEG_PATH;
@@ -367,8 +353,8 @@ describe('Capabilities', () => {
         testhelper.logError(err);
         assert.ok(!err);
 
-        ffmpeg.should.instanceOf(String);
-        ffmpeg.length.should.above(0);
+        expect(typeof ffmpeg).toBe('string');
+        expect(ffmpeg.length).toBeGreaterThan(0);
 
         // Just check that the callback is actually called synchronously
         // (which indicates no which call was made)
@@ -377,9 +363,9 @@ describe('Capabilities', () => {
           testhelper.logError(err);
           assert.ok(!err);
 
-          ffmpeg.should.instanceOf(String);
-          ffmpeg.length.should.above(0);
-          after.should.equal(0);
+          expect(typeof ffmpeg).toBe('string');
+          expect(ffmpeg.length).toBeGreaterThan(0);
+          expect(after).toBe(0);
 
           done();
         });
@@ -411,12 +397,12 @@ describe('Capabilities', () => {
       process.env.FFPROBE_PATH = FFPROBE_PATH;
     });
 
-    after(() => {
+    afterAll(() => {
       // Forget paths after all tests
       (new Ffmpeg())._forgetPaths();
     });
 
-    it('should allow manual definition of ffprobe binary path', (done) => {
+    it('should allow manual definition of ffprobe binary path', () => {
       var ff = new Ffmpeg();
 
       ff.setFfprobePath('/doom/di/dom');
@@ -424,12 +410,11 @@ describe('Capabilities', () => {
         testhelper.logError(err);
         assert.ok(!err);
 
-        ffprobe.should.equal('/doom/di/dom');
-        done();
+        expect(ffprobe).toBe('/doom/di/dom');
       });
     });
 
-    it('should allow static manual definition of ffprobe binary path', (done) => {
+    it('should allow static manual definition of ffprobe binary path', () => {
       var ff = new Ffmpeg();
 
       Ffmpeg.setFfprobePath('/doom/di/dom2');
@@ -437,12 +422,11 @@ describe('Capabilities', () => {
         testhelper.logError(err);
         assert.ok(!err);
 
-        ffprobe.should.equal('/doom/di/dom2');
-        done();
+        expect(ffprobe).toBe('/doom/di/dom2');
       });
     });
 
-    it('should look for ffprobe in the PATH if FFPROBE_PATH is not defined', (done) => {
+    it('should look for ffprobe in the PATH if FFPROBE_PATH is not defined', () => {
       var ff = new Ffmpeg();
 
       delete process.env.FFPROBE_PATH;
@@ -452,16 +436,15 @@ describe('Capabilities', () => {
         testhelper.logError(err);
         assert.ok(!err);
 
-        ffprobe.should.instanceOf(String);
-        ffprobe.length.should.above(0);
+        expect(typeof ffprobe).toBe('string');
+        expect(ffprobe.length).toBeGreaterThan(0);
 
         var paths = process.env.PATH.split(PATH_DELIMITER);
-        paths.indexOf(path.dirname(ffprobe)).should.above(-1);
-        done();
+        expect(paths.indexOf(path.dirname(ffprobe))).toBeGreaterThan(-1);
       });
     });
 
-    (skipAltTest ? it.skip : it)('should use FFPROBE_PATH if defined and valid', (done) => {
+    (skipAltTest ? it.skip : it)('should use FFPROBE_PATH if defined and valid', () => {
       var ff = new Ffmpeg();
 
       process.env.FFPROBE_PATH = ALT_FFPROBE_PATH;
@@ -471,12 +454,11 @@ describe('Capabilities', () => {
         testhelper.logError(err);
         assert.ok(!err);
 
-        ffprobe.should.equal(ALT_FFPROBE_PATH);
-        done();
+        expect(ffprobe).toBe(ALT_FFPROBE_PATH);
       });
     });
 
-    it('should fall back to searching in the PATH if FFPROBE_PATH is invalid', (done) => {
+    it('should fall back to searching in the PATH if FFPROBE_PATH is invalid', () => {
       var ff = new Ffmpeg();
 
       process.env.FFPROBE_PATH = '/nope/not-here/nothing-to-see-here';
@@ -486,16 +468,15 @@ describe('Capabilities', () => {
         testhelper.logError(err);
         assert.ok(!err);
 
-        ffprobe.should.instanceOf(String);
-        ffprobe.length.should.above(0);
+        expect(typeof ffprobe).toBe('string');
+        expect(ffprobe.length).toBeGreaterThan(0);
 
         var paths = process.env.PATH.split(PATH_DELIMITER);
-        paths.indexOf(path.dirname(ffprobe)).should.above(-1);
-        done();
+        expect(paths.indexOf(path.dirname(ffprobe))).toBeGreaterThan(-1);
       });
     });
 
-    it('should remember ffprobe path', (done) => {
+    it('should remember ffprobe path', () => {
       var ff = new Ffmpeg();
 
       delete process.env.FFPROBE_PATH;
@@ -505,8 +486,8 @@ describe('Capabilities', () => {
         testhelper.logError(err);
         assert.ok(!err);
 
-        ffprobe.should.instanceOf(String);
-        ffprobe.length.should.above(0);
+        expect(typeof ffprobe).toBe('string');
+        expect(ffprobe.length).toBeGreaterThan(0);
 
         // Just check that the callback is actually called synchronously
         // (which indicates no which call was made)
@@ -515,9 +496,9 @@ describe('Capabilities', () => {
           testhelper.logError(err);
           assert.ok(!err);
 
-          ffprobe.should.instanceOf(String);
-          ffprobe.length.should.above(0);
-          after.should.equal(0);
+          expect(typeof ffprobe).toBe('string');
+          expect(ffprobe.length).toBeGreaterThan(0);
+          expect(after).toBe(0);
 
           done();
         });
@@ -554,38 +535,35 @@ describe('Capabilities', () => {
       process.env.FLVTOOL2_PATH = FLVTOOL2_PATH;
     });
 
-    after(() => {
+    afterAll(() => {
       // Forget paths after all tests
       (new Ffmpeg())._forgetPaths();
     });
 
-    (skipTest ? it.skip : it)('should allow manual definition of fflvtool binary path', (done) => {
+    (skipTest ? it.skip : it)('should allow manual definition of fflvtool binary path', () => {
       var ff = new Ffmpeg();
 
       ff.setFlvtoolPath('/doom/di/dom');
       ff._getFlvtoolPath((err, fflvtool) => {
         testhelper.logError(err);
-        assert.ok(!err);
+        expect(err).toBeNull();
 
-        fflvtool.should.equal('/doom/di/dom');
-        done();
+        expect(fflvtool).toBe('/doom/di/dom');
       });
     });
 
-    (skipTest ? it.skip : it)('should allow static manual definition of fflvtool binary path', (done) => {
+    (skipTest ? it.skip : it)('should allow static manual definition of fflvtool binary path', () => {
       var ff = new Ffmpeg();
 
       Ffmpeg.setFlvtoolPath('/doom/di/dom2');
       ff._getFlvtoolPath((err, fflvtool) => {
         testhelper.logError(err);
-        assert.ok(!err);
-
-        fflvtool.should.equal('/doom/di/dom2');
-        done();
+        expect(err).toBeNull();
+        expect(fflvtool).toBe('/doom/di/dom2')
       });
     });
 
-    (skipTest ? it.skip : it)('should look for fflvtool in the PATH if FLVTOOL2_PATH is not defined', (done) => {
+    (skipTest ? it.skip : it)('should look for fflvtool in the PATH if FLVTOOL2_PATH is not defined', () => {
       var ff = new Ffmpeg();
 
       delete process.env.FLVTOOL2_PATH;
@@ -593,18 +571,17 @@ describe('Capabilities', () => {
       ff._forgetPaths();
       ff._getFlvtoolPath((err, fflvtool) => {
         testhelper.logError(err);
-        assert.ok(!err);
+        expect(err).toBeNull();
 
-        fflvtool.should.instanceOf(String);
-        fflvtool.length.should.above(0);
+        expect(flvtool).toBeInstanceOf(String)
+        expect(flvtool).toHaveLengthGreaterThan(0);
 
         var paths = process.env.PATH.split(PATH_DELIMITER);
-        paths.indexOf(path.dirname(fflvtool)).should.above(-1);
-        done();
+        expect(paths).toContain(path.dirname(fflvtool))
       });
     });
 
-    (skipTest || skipAltTest ? it.skip : it)('should use FLVTOOL2_PATH if defined and valid', (done) => {
+    (skipTest || skipAltTest ? it.skip : it)('should use FLVTOOL2_PATH if defined and valid', () => {
       var ff = new Ffmpeg();
 
       process.env.FLVTOOL2_PATH = ALT_FLVTOOL_PATH;
@@ -612,14 +589,13 @@ describe('Capabilities', () => {
       ff._forgetPaths();
       ff._getFlvtoolPath((err, fflvtool) => {
         testhelper.logError(err);
-        assert.ok(!err);
+        expect(err).toBeNull();
 
-        fflvtool.should.equal(ALT_FLVTOOL_PATH);
-        done();
+        expect(fflvtool).toBe(ALT_FLVTOOL_PATH);
       });
     });
 
-    (skipTest ? it.skip : it)('should fall back to searching in the PATH if FLVTOOL2_PATH is invalid', (done) => {
+    (skipTest ? it.skip : it)('should fall back to searching in the PATH if FLVTOOL2_PATH is invalid', () => {
       var ff = new Ffmpeg();
 
       process.env.FLVTOOL2_PATH = '/nope/not-here/nothing-to-see-here';
@@ -627,18 +603,17 @@ describe('Capabilities', () => {
       ff._forgetPaths();
       ff._getFlvtoolPath((err, fflvtool) => {
         testhelper.logError(err);
-        assert.ok(!err);
+        expect(err).toBeNull();
 
-        fflvtool.should.instanceOf(String);
-        fflvtool.length.should.above(0);
+        expect(fflvtool).toBeInstanceOf(String);
+        expect(fflvtool).toHaveLengthGreaterThan(0);
 
         var paths = process.env.PATH.split(PATH_DELIMITER);
-        paths.indexOf(path.dirname(fflvtool)).should.above(-1);
-        done();
+        expect(paths).toContain(path.dirname(fflvtool));
       });
     });
 
-    (skipTest ? it.skip : it)('should remember fflvtool path', (done) => {
+    (skipTest ? it.skip : it)('should remember fflvtool path', () => {
       var ff = new Ffmpeg();
 
       delete process.env.FLVTOOL2_PATH;
@@ -646,23 +621,22 @@ describe('Capabilities', () => {
       ff._forgetPaths();
       ff._getFlvtoolPath((err, fflvtool) => {
         testhelper.logError(err);
-        assert.ok(!err);
+        expect(err).toBeNull();
 
-        fflvtool.should.instanceOf(String);
-        fflvtool.length.should.above(0);
+        expect(fflvtool).toBeInstanceOf(String);
+        expect(fflvtool).toHaveLengthGreaterThan(0);
 
         // Just check that the callback is actually called synchronously
         // (which indicates no which call was made)
         var after = 0;
         ff._getFlvtoolPath((err, fflvtool) => {
           testhelper.logError(err);
-          assert.ok(!err);
+          expect(err).toBeNull();
 
-          fflvtool.should.instanceOf(String);
-          fflvtool.length.should.above(0);
-          after.should.equal(0);
+          expect(fflvtool).toBeInstanceOf(String);
+          expect(fflvtool).toHaveLengthGreaterThan(0);
+          expect(after).toBe(0);
 
-          done();
         });
 
         after = 1;

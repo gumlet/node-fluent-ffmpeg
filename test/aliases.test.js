@@ -1,6 +1,6 @@
 /*jshint node:true*/
 /*global describe,it*/
-
+import { expect, describe, it } from 'vitest';
 
 import Ffmpeg from '../index.js';
 
@@ -68,15 +68,15 @@ var aliases = {
 
 describe('Method aliases', () => {
   Object.keys(aliases).forEach((category) => {
-    describe(category + ' methods', () => {
+    describe(`${category} methods`, () => {
       Object.keys(aliases[category]).forEach((method) => {
-        describe('FfmpegCommand#' + method, () => {
+        describe(`FfmpegCommand#${method}`, () => {
           aliases[category][method].forEach((alias) => {
-            it('should have a \'' + alias + '\' alias', () => {
+            it(`should have a '${alias}' alias`, () => {
               var ff = new Ffmpeg();
 
-              (typeof ff[method]).should.equal('function');
-              ff[method].should.equal(ff[alias]);
+              expect(ff[method]).toBeTypeOf('function')
+              expect(ff[method]).toBe(ff[alias])
             });
           });
         });
