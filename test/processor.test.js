@@ -13,6 +13,7 @@ import fs from 'node:fs';
 import { strict as assert } from 'node:assert';
 import { platform } from 'node:os';
 import { exec, spawn } from 'node:child_process';
+import async from 'async';
 import { Readable, Writable, PassThrough} from 'node:stream';
 import testhelper from './helpers.js';
 
@@ -70,7 +71,8 @@ describe('Processor', () => {
 
     exec(testhelper.getFfmpegCheck(), (err) => {
       if (!err) {
-        Promise.all([
+        // check if all test files exist
+        async.each([
             this.testfile,
             this.testfilewide,
             this.testfilebig,
@@ -78,12 +80,13 @@ describe('Processor', () => {
             this.testfileaudio1,
             this.testfileaudio2,
             this.testfileaudio3
-          ].map((file) => fs.promises.access(file, fs.constants.F_OK)))
-          .then(() => {
-            done();
-          }).catch(err => {
-            done(err);
-          });
+          ], (file, cb) => {
+            fs.access(file, fs.constants.F_OK, (err) => {
+              cb(!err ? null : new Error(`test video file does not exist, check path (${file})`));
+            });
+          },
+          done
+        );
       } else {
         done(new Error('cannot run test without ffmpeg installed, aborting test...'));
       }
@@ -123,48 +126,61 @@ describe('Processor', () => {
   });
 
   afterEach(function cleanup(done) {
-    (async () => {
-      try {
-        if (this.processes.length) {
-          if (this.outputs.length) {
-            testhelper.logOutput(this.outputs[0][0], this.outputs[0][1]);
+
+    async.series([
+        // Ensure every process has finished
+        (cb) => {
+          if (this.processes.length) {
+            if (this.outputs.length) {
+              testhelper.logOutput(this.outputs[0][0], this.outputs[0][1]);
+            }
+
+            this.test.error(new Error(this.processes.length + ' processes still running after "' + this.currentTest.title + '"'));
+            cb();
+          } else {
+            cb();
           }
-          this.test.error(new Error(this.processes.length + ' processes still running after "' + this.currentTest.title + '"'));
+        },
+
+        // Ensure all created files are removed
+        (cb) => {
+          async.each(this.files, (file, cb) => {
+            fs.access(file, fs.constants.F_OK, (err) => {
+              if (!err) {
+                fs.unlink(file, cb);
+              } else {
+                if (this.outputs.length) {
+                  testhelper.logOutput(this.outputs[0][0], this.outputs[0][1]);
+                }
+
+                this.test.error(new Error('Expected created file ' + file + ' by  "' + this.currentTest.title + '"'));
+                cb();
+              }
+            });
+          }, cb);
+        },
+
+        // Ensure all created dirs are removed
+        (cb) => {
+          async.each(this.dirs, (dir, cb) => {
+            fs.access(dir, fs.constants.F_OK, (err) => {
+              if (!err) {
+                fs.rmdir(dir, cb);
+              } else {
+                if (this.outputs.length) {
+                  testhelper.logOutput(this.outputs[0][0], this.outputs[0][1]);
+                }
+
+                this.test.error(new Error('Expected created directory ' + dir + ' by  "' + this.currentTest.title + '"'));
+                cb();
+              }
+            });
+          }, cb);
         }
+      ],
 
-        await Promise.all(this.files.map((file) => new Promise((resolve) => {
-          fs.access(file, fs.constants.F_OK, (err) => {
-            if (!err) {
-              fs.unlink(file, resolve);
-            } else {
-              if (this.outputs.length) {
-                testhelper.logOutput(this.outputs[0][0], this.outputs[0][1]);
-              }
-              this.test.error(new Error('Expected created file ' + file + ' by  "' + this.currentTest.title + '"'));
-              resolve();
-            }
-          });
-        })));
-
-        await Promise.all(this.dirs.map((dir) => new Promise((resolve) => {
-          fs.access(dir, fs.constants.F_OK, (err) => {
-            if (!err) {
-              fs.rmdir(dir, resolve);
-            } else {
-              if (this.outputs.length) {
-                testhelper.logOutput(this.outputs[0][0], this.outputs[0][1]);
-              }
-              this.test.error(new Error('Expected created directory ' + dir + ' by  "' + this.currentTest.title + '"'));
-              resolve();
-            }
-          });
-        })));
-
-        done();
-      } catch (err) {
-        done(err);
-      }
-    })();
+      done
+    );
   });
 
   describe('Process controls', () => {
@@ -1012,26 +1028,28 @@ describe('Processor', () => {
           assert.ok(!err);
         })
         .on('end', () => {
-          Promise.all(
-            [testFile1, testFile2, testFile3].map((file) => new Promise((resolve, reject) => {
+          async.map(
+            [testFile1, testFile2, testFile3],
+            (file, cb) => {
               fs.access(file, fs.constants.F_OK, (err) => {
-                if (err) return reject(err);
+                assert.ok(!err);
+
+                // check filesize to make sure conversion actually worked
                 fs.stat(file, (err, stats) => {
-                  if (err) return reject(err);
                   assert.ok(!err && stats);
                   stats.size.should.above(0);
                   stats.isFile().should.equal(true);
-                  resolve();
+
+                  cb(err);
                 });
               });
-            }))
-          ).then(() => {
-            done();
-          }).catch((err) => {
-            testhelper.logError(err);
-            assert.ok(!err);
-            done();
-          });
+            },
+            (err) => {
+              testhelper.logError(err);
+              assert.ok(!err);
+              done();
+            }
+          );
         })
         .run();
     });
