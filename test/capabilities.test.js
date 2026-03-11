@@ -16,9 +16,10 @@ const PATH_DELIMITER = path.delimiter || (platform().match(/win(32|64)/) ? ';' :
 describe('Capabilities', () => {
   describe('ffmpeg capabilities', () => {
     it('should enable querying for available codecs', () => {
+      return new Promise((resolve, reject) => {
       new Ffmpeg({ source: '' }).getAvailableCodecs((err, codecs) => {
         testhelper.logError(err);
-        assert.ok(!err);
+        if(err) reject(err)
 
         expect(typeof codecs).toBe('object');
         expect(Object.keys(codecs).length).not.toBe(0);
@@ -32,13 +33,16 @@ describe('Capabilities', () => {
         expect(typeof codecs.pcm_s16le.canEncode).toBe('boolean');
         expect('canDecode' in codecs.pcm_s16le).toBe(true);
         expect(typeof codecs.pcm_s16le.canDecode).toBe('boolean');
+        resolve()
       });
+    })
     });
 
     it('should enable querying for available encoders', () => {
+      return new Promise((resolve, reject) => {
       new Ffmpeg({ source: '' }).getAvailableEncoders((err, encoders) => {
         testhelper.logError(err);
-        assert.ok(!err);
+        if(err) reject(err)
 
         expect(typeof encoders).toBe('object');
         expect(Object.keys(encoders).length).not.toBe(0);
@@ -50,14 +54,17 @@ describe('Capabilities', () => {
         expect(typeof encoders.pcm_s16le.description).toBe('string');
         expect('experimental' in encoders.pcm_s16le).toBe(true);
         expect(typeof encoders.pcm_s16le.experimental).toBe('boolean');
+        resolve()
 
       });
+    })
     });
 
     it('should enable querying for available formats', () => {
+      return new Promise((resolve, reject) => {
       new Ffmpeg({ source: '' }).getAvailableFormats((err, formats) => {
         testhelper.logError(err);
-        assert.ok(!err);
+        if(err) reject(err)
 
         expect(typeof formats).toBe('object');
         expect(Object.keys(formats).length).not.toBe(0);
@@ -69,14 +76,16 @@ describe('Capabilities', () => {
         expect(typeof formats.wav.canMux).toBe('boolean');
         expect('canDemux' in formats.wav).toBe(true);
         expect(typeof formats.wav.canDemux).toBe('boolean');
-
+        resolve()
       });
+    })
     });
 
     it('should enable querying for available filters', () => {
+      return new Promise((resolve, reject) => {
       new Ffmpeg({ source: '' }).getAvailableFilters((err, filters) => {
         testhelper.logError(err);
-        assert.ok(!err);
+        if(err) reject(err)
 
         expect(typeof filters).toBe('object');
         expect(Object.keys(filters).length).not.toBe(0);
@@ -92,14 +101,16 @@ describe('Capabilities', () => {
         expect(typeof filters.anull.multipleInputs).toBe('boolean');
         expect('multipleOutputs' in filters.anull).toBe(true);
         expect(typeof filters.anull.multipleOutputs).toBe('boolean');
-
+        resolve()
       });
+    })
     });
 
     it('should enable querying capabilities without instanciating a command', () => {
+      return new Promise((resolve, reject) => {
       Ffmpeg.getAvailableCodecs((err, codecs) => {
         testhelper.logError(err);
-        assert.ok(!err);
+        if(err) reject(err);
 
         expect(typeof codecs).toBe('object');
         expect(Object.keys(codecs).length).not.toBe(0);
@@ -117,13 +128,15 @@ describe('Capabilities', () => {
 
             expect(typeof formats).toBe('object');
             expect(Object.keys(formats).length).not.toBe(0);
-
+            resolve()
           });
         });
       });
+    })
     });
 
     it('should enable checking command arguments for available codecs, formats and encoders', () => {
+      return new Promise((resolve, reject) => {
       async.waterfall([
         // Check with everything available
         (cb) => {
@@ -229,16 +242,21 @@ describe('Capabilities', () => {
       ], (err) => {
         testhelper.logError(err);
         assert.ok(!err);
+        resolve()
       });
+    })
     });
 
     it('should check capabilities before running a command', () => {
+      return new Promise((resolve, reject) => {
       new Ffmpeg('/path/to/file.avi')
         .on('error', (err) => {
           expect(err.message).toMatch(/Output format invalid-output-format is not available/);
+          resolve()
         })
         .toFormat('invalid-output-format')
         .saveToFile('/tmp/will-not-be-created.mp4');
+      })
     });
   });
 
@@ -273,24 +291,30 @@ describe('Capabilities', () => {
       var ff = new Ffmpeg();
 
       ff.setFfmpegPath('/doom/di/dom');
+      return new Promise((resolve) => {
       ff._getFfmpegPath((err, ffmpeg) => {
         testhelper.logError(err);
         assert.ok(!err);
 
         expect(ffmpeg).toBe('/doom/di/dom');
+        resolve()
       });
+    })
     });
 
     it('should allow static manual definition of ffmpeg binary path', () => {
       var ff = new Ffmpeg();
 
       Ffmpeg.setFfmpegPath('/doom/di/dom2');
+      return new Promise((resolve) => {
       ff._getFfmpegPath((err, ffmpeg) => {
         testhelper.logError(err);
         assert.ok(!err);
 
         expect(ffmpeg).toBe('/doom/di/dom2');
+        resolve()
       });
+    })
     });
 
     it('should look for ffmpeg in the PATH if FFMPEG_PATH is not defined', () => {
@@ -299,6 +323,7 @@ describe('Capabilities', () => {
       delete process.env.FFMPEG_PATH;
 
       ff._forgetPaths();
+      return new Promise((resolve) => {
       ff._getFfmpegPath((err, ffmpeg) => {
         testhelper.logError(err);
         assert.ok(!err);
@@ -308,7 +333,9 @@ describe('Capabilities', () => {
 
         var paths = process.env.PATH.split(PATH_DELIMITER);
         expect(paths.indexOf(path.dirname(ffmpeg))).toBeGreaterThan(-1);
+        resolve()
       });
+    })
     });
 
     (skipAltTest ? it.skip : it)('should use FFMPEG_PATH if defined and valid', () => {
@@ -317,12 +344,15 @@ describe('Capabilities', () => {
       process.env.FFMPEG_PATH = ALT_FFMPEG_PATH;
 
       ff._forgetPaths();
+      return new Promise((resolve) => {
       ff._getFfmpegPath((err, ffmpeg) => {
         testhelper.logError(err);
         assert.ok(!err);
 
         expect(ffmpeg).toBe(ALT_FFMPEG_PATH);
+        resolve()
       });
+    })
     });
 
     it('should fall back to searching in the PATH if FFMPEG_PATH is invalid', () => {
@@ -331,6 +361,7 @@ describe('Capabilities', () => {
       process.env.FFMPEG_PATH = '/nope/not-here/nothing-to-see-here';
 
       ff._forgetPaths();
+      return new Promise((resolve) => {
       ff._getFfmpegPath((err, ffmpeg) => {
         testhelper.logError(err);
         assert.ok(!err);
@@ -340,7 +371,9 @@ describe('Capabilities', () => {
 
         var paths = process.env.PATH.split(PATH_DELIMITER);
         expect(paths.indexOf(path.dirname(ffmpeg))).toBeGreaterThan(-1);
+        resolve()
       });
+    })
     });
 
     it('should remember ffmpeg path', () => {
@@ -349,6 +382,7 @@ describe('Capabilities', () => {
       delete process.env.FFMPEG_PATH;
 
       ff._forgetPaths();
+      return new Promise((resolve) => {
       ff._getFfmpegPath((err, ffmpeg) => {
         testhelper.logError(err);
         assert.ok(!err);
@@ -366,12 +400,12 @@ describe('Capabilities', () => {
           expect(typeof ffmpeg).toBe('string');
           expect(ffmpeg.length).toBeGreaterThan(0);
           expect(after).toBe(0);
-
-          done();
+          resolve()
         });
 
         after = 1;
       });
+    })
     });
   });
 
@@ -406,24 +440,30 @@ describe('Capabilities', () => {
       var ff = new Ffmpeg();
 
       ff.setFfprobePath('/doom/di/dom');
+      return new Promise((resolve) => {
       ff._getFfprobePath((err, ffprobe) => {
         testhelper.logError(err);
         assert.ok(!err);
 
         expect(ffprobe).toBe('/doom/di/dom');
+        resolve()
       });
+    })
     });
 
     it('should allow static manual definition of ffprobe binary path', () => {
       var ff = new Ffmpeg();
 
       Ffmpeg.setFfprobePath('/doom/di/dom2');
+      return new Promise((resolve) => {
       ff._getFfprobePath((err, ffprobe) => {
         testhelper.logError(err);
         assert.ok(!err);
 
         expect(ffprobe).toBe('/doom/di/dom2');
+        resolve()
       });
+    })
     });
 
     it('should look for ffprobe in the PATH if FFPROBE_PATH is not defined', () => {
@@ -432,6 +472,7 @@ describe('Capabilities', () => {
       delete process.env.FFPROBE_PATH;
 
       ff._forgetPaths();
+      return new Promise((resolve) => {
       ff._getFfprobePath((err, ffprobe) => {
         testhelper.logError(err);
         assert.ok(!err);
@@ -441,7 +482,9 @@ describe('Capabilities', () => {
 
         var paths = process.env.PATH.split(PATH_DELIMITER);
         expect(paths.indexOf(path.dirname(ffprobe))).toBeGreaterThan(-1);
+        resolve()
       });
+    })
     });
 
     (skipAltTest ? it.skip : it)('should use FFPROBE_PATH if defined and valid', () => {
@@ -450,12 +493,15 @@ describe('Capabilities', () => {
       process.env.FFPROBE_PATH = ALT_FFPROBE_PATH;
 
       ff._forgetPaths();
+      return new Promise((resolve) => {
       ff._getFfprobePath((err, ffprobe) => {
         testhelper.logError(err);
         assert.ok(!err);
 
         expect(ffprobe).toBe(ALT_FFPROBE_PATH);
+        resolve()
       });
+    })
     });
 
     it('should fall back to searching in the PATH if FFPROBE_PATH is invalid', () => {
@@ -464,6 +510,7 @@ describe('Capabilities', () => {
       process.env.FFPROBE_PATH = '/nope/not-here/nothing-to-see-here';
 
       ff._forgetPaths();
+      return new Promise((resolve) => {
       ff._getFfprobePath((err, ffprobe) => {
         testhelper.logError(err);
         assert.ok(!err);
@@ -473,7 +520,9 @@ describe('Capabilities', () => {
 
         var paths = process.env.PATH.split(PATH_DELIMITER);
         expect(paths.indexOf(path.dirname(ffprobe))).toBeGreaterThan(-1);
+        resolve()
       });
+    })
     });
 
     it('should remember ffprobe path', () => {
@@ -482,6 +531,7 @@ describe('Capabilities', () => {
       delete process.env.FFPROBE_PATH;
 
       ff._forgetPaths();
+      return new Promise((resolve) => {
       ff._getFfprobePath((err, ffprobe) => {
         testhelper.logError(err);
         assert.ok(!err);
@@ -500,11 +550,12 @@ describe('Capabilities', () => {
           expect(ffprobe.length).toBeGreaterThan(0);
           expect(after).toBe(0);
 
-          done();
+          resolve()
         });
 
         after = 1;
       });
+    })
     });
   });
 
@@ -544,23 +595,29 @@ describe('Capabilities', () => {
       var ff = new Ffmpeg();
 
       ff.setFlvtoolPath('/doom/di/dom');
+      return new Promise((resolve) => {
       ff._getFlvtoolPath((err, fflvtool) => {
         testhelper.logError(err);
         expect(err).toBeNull();
 
         expect(fflvtool).toBe('/doom/di/dom');
+        resolve()
       });
+    })
     });
 
     (skipTest ? it.skip : it)('should allow static manual definition of fflvtool binary path', () => {
       var ff = new Ffmpeg();
 
       Ffmpeg.setFlvtoolPath('/doom/di/dom2');
+      return new Promise((resolve) => {
       ff._getFlvtoolPath((err, fflvtool) => {
         testhelper.logError(err);
         expect(err).toBeNull();
         expect(fflvtool).toBe('/doom/di/dom2')
+        resolve()
       });
+    });
     });
 
     (skipTest ? it.skip : it)('should look for fflvtool in the PATH if FLVTOOL2_PATH is not defined', () => {
@@ -569,6 +626,7 @@ describe('Capabilities', () => {
       delete process.env.FLVTOOL2_PATH;
 
       ff._forgetPaths();
+      return new Promise((resolve) => {
       ff._getFlvtoolPath((err, fflvtool) => {
         testhelper.logError(err);
         expect(err).toBeNull();
@@ -578,7 +636,9 @@ describe('Capabilities', () => {
 
         var paths = process.env.PATH.split(PATH_DELIMITER);
         expect(paths).toContain(path.dirname(fflvtool))
+        resolve()
       });
+    })
     });
 
     (skipTest || skipAltTest ? it.skip : it)('should use FLVTOOL2_PATH if defined and valid', () => {
@@ -587,12 +647,15 @@ describe('Capabilities', () => {
       process.env.FLVTOOL2_PATH = ALT_FLVTOOL_PATH;
 
       ff._forgetPaths();
+      return new Promise((resolve) => {
       ff._getFlvtoolPath((err, fflvtool) => {
         testhelper.logError(err);
         expect(err).toBeNull();
 
         expect(fflvtool).toBe(ALT_FLVTOOL_PATH);
+        resolve()
       });
+    })
     });
 
     (skipTest ? it.skip : it)('should fall back to searching in the PATH if FLVTOOL2_PATH is invalid', () => {
@@ -601,6 +664,7 @@ describe('Capabilities', () => {
       process.env.FLVTOOL2_PATH = '/nope/not-here/nothing-to-see-here';
 
       ff._forgetPaths();
+      return new Promise((resolve) => {
       ff._getFlvtoolPath((err, fflvtool) => {
         testhelper.logError(err);
         expect(err).toBeNull();
@@ -610,7 +674,9 @@ describe('Capabilities', () => {
 
         var paths = process.env.PATH.split(PATH_DELIMITER);
         expect(paths).toContain(path.dirname(fflvtool));
+        resolve()
       });
+    })
     });
 
     (skipTest ? it.skip : it)('should remember fflvtool path', () => {
@@ -619,6 +685,7 @@ describe('Capabilities', () => {
       delete process.env.FLVTOOL2_PATH;
 
       ff._forgetPaths();
+      return new Promise((resolve) => {
       ff._getFlvtoolPath((err, fflvtool) => {
         testhelper.logError(err);
         expect(err).toBeNull();
@@ -637,10 +704,12 @@ describe('Capabilities', () => {
           expect(fflvtool).toHaveLengthGreaterThan(0);
           expect(after).toBe(0);
 
+          resolve()
         });
 
         after = 1;
       });
+    })
     });
   });
 
