@@ -631,7 +631,7 @@ describe('Capabilities', () => {
         expect(err).toBeNull();
 
         expect(typeof fflvtool).toBe('string');
-        expect(fflvtool).toHaveLengthGreaterThan(0);
+        expect(fflvtool.length).toBeGreaterThan(0);
 
         var paths = process.env.PATH.split(PATH_DELIMITER);
         expect(paths).toContain(path.dirname(fflvtool))
@@ -669,7 +669,7 @@ describe('Capabilities', () => {
         expect(err).toBeNull();
 
         expect(typeof fflvtool).toBe('string');
-        expect(fflvtool).toHaveLengthGreaterThan(0);
+        expect(fflvtool.length).toBeGreaterThan(0);
 
         var paths = process.env.PATH.split(PATH_DELIMITER);
         expect(paths).toContain(path.dirname(fflvtool));
@@ -690,7 +690,7 @@ describe('Capabilities', () => {
         expect(err).toBeNull();
 
         expect(typeof fflvtool).toBe('string');
-        expect(fflvtool).toHaveLengthGreaterThan(0);
+        expect(fflvtool.length).toBeGreaterThan(0);
 
         // Just check that the callback is actually called synchronously
         // (which indicates no which call was made)
@@ -700,7 +700,7 @@ describe('Capabilities', () => {
           expect(err).toBeNull();
 
           expect(typeof fflvtool).toBe('string');
-          expect(fflvtool).toHaveLengthGreaterThan(0);
+          expect(fflvtool.length).toBeGreaterThan(0);
           expect(after).toBe(0);
 
           resolve()
