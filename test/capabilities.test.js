@@ -17,245 +17,245 @@ describe('Capabilities', () => {
   describe('ffmpeg capabilities', () => {
     it('should enable querying for available codecs', () => {
       return new Promise((resolve, reject) => {
-      new Ffmpeg({ source: '' }).getAvailableCodecs((err, codecs) => {
-        testhelper.logError(err);
-        if(err) reject(err)
+        new Ffmpeg({ source: '' }).getAvailableCodecs((err, codecs) => {
+          testhelper.logError(err);
+          if (err) reject(err)
 
-        expect(typeof codecs).toBe('object');
-        expect(Object.keys(codecs).length).not.toBe(0);
+          expect(typeof codecs).toBe('object');
+          expect(Object.keys(codecs).length).not.toBe(0);
 
-        expect('pcm_s16le' in codecs).toBe(true);
-        expect('type' in codecs.pcm_s16le).toBe(true);
-        expect(typeof codecs.pcm_s16le.type).toBe('string');
-        expect('description' in codecs.pcm_s16le).toBe(true);
-        expect(typeof codecs.pcm_s16le.description).toBe('string');
-        expect('canEncode' in codecs.pcm_s16le).toBe(true);
-        expect(typeof codecs.pcm_s16le.canEncode).toBe('boolean');
-        expect('canDecode' in codecs.pcm_s16le).toBe(true);
-        expect(typeof codecs.pcm_s16le.canDecode).toBe('boolean');
-        resolve()
-      });
-    })
+          expect('pcm_s16le' in codecs).toBe(true);
+          expect('type' in codecs.pcm_s16le).toBe(true);
+          expect(typeof codecs.pcm_s16le.type).toBe('string');
+          expect('description' in codecs.pcm_s16le).toBe(true);
+          expect(typeof codecs.pcm_s16le.description).toBe('string');
+          expect('canEncode' in codecs.pcm_s16le).toBe(true);
+          expect(typeof codecs.pcm_s16le.canEncode).toBe('boolean');
+          expect('canDecode' in codecs.pcm_s16le).toBe(true);
+          expect(typeof codecs.pcm_s16le.canDecode).toBe('boolean');
+          resolve()
+        });
+      })
     });
 
     it('should enable querying for available encoders', () => {
       return new Promise((resolve, reject) => {
-      new Ffmpeg({ source: '' }).getAvailableEncoders((err, encoders) => {
-        testhelper.logError(err);
-        if(err) reject(err)
+        new Ffmpeg({ source: '' }).getAvailableEncoders((err, encoders) => {
+          testhelper.logError(err);
+          if (err) reject(err)
 
-        expect(typeof encoders).toBe('object');
-        expect(Object.keys(encoders).length).not.toBe(0);
+          expect(typeof encoders).toBe('object');
+          expect(Object.keys(encoders).length).not.toBe(0);
 
-        expect('pcm_s16le' in encoders).toBe(true);
-        expect('type' in encoders.pcm_s16le).toBe(true);
-        expect(typeof encoders.pcm_s16le.type).toBe('string');
-        expect('description' in encoders.pcm_s16le).toBe(true);
-        expect(typeof encoders.pcm_s16le.description).toBe('string');
-        expect('experimental' in encoders.pcm_s16le).toBe(true);
-        expect(typeof encoders.pcm_s16le.experimental).toBe('boolean');
-        resolve()
+          expect('pcm_s16le' in encoders).toBe(true);
+          expect('type' in encoders.pcm_s16le).toBe(true);
+          expect(typeof encoders.pcm_s16le.type).toBe('string');
+          expect('description' in encoders.pcm_s16le).toBe(true);
+          expect(typeof encoders.pcm_s16le.description).toBe('string');
+          expect('experimental' in encoders.pcm_s16le).toBe(true);
+          expect(typeof encoders.pcm_s16le.experimental).toBe('boolean');
+          resolve()
 
-      });
-    })
+        });
+      })
     });
 
     it('should enable querying for available formats', () => {
       return new Promise((resolve, reject) => {
-      new Ffmpeg({ source: '' }).getAvailableFormats((err, formats) => {
-        testhelper.logError(err);
-        if(err) reject(err)
+        new Ffmpeg({ source: '' }).getAvailableFormats((err, formats) => {
+          testhelper.logError(err);
+          if (err) reject(err)
 
-        expect(typeof formats).toBe('object');
-        expect(Object.keys(formats).length).not.toBe(0);
+          expect(typeof formats).toBe('object');
+          expect(Object.keys(formats).length).not.toBe(0);
 
-        expect('wav' in formats).toBe(true);
-        expect('description' in formats.wav).toBe(true);
-        expect(typeof formats.wav.description).toBe('string');
-        expect('canMux' in formats.wav).toBe(true);
-        expect(typeof formats.wav.canMux).toBe('boolean');
-        expect('canDemux' in formats.wav).toBe(true);
-        expect(typeof formats.wav.canDemux).toBe('boolean');
-        resolve()
-      });
-    })
+          expect('wav' in formats).toBe(true);
+          expect('description' in formats.wav).toBe(true);
+          expect(typeof formats.wav.description).toBe('string');
+          expect('canMux' in formats.wav).toBe(true);
+          expect(typeof formats.wav.canMux).toBe('boolean');
+          expect('canDemux' in formats.wav).toBe(true);
+          expect(typeof formats.wav.canDemux).toBe('boolean');
+          resolve()
+        });
+      })
     });
 
     it('should enable querying for available filters', () => {
       return new Promise((resolve, reject) => {
-      new Ffmpeg({ source: '' }).getAvailableFilters((err, filters) => {
-        testhelper.logError(err);
-        if(err) reject(err)
+        new Ffmpeg({ source: '' }).getAvailableFilters((err, filters) => {
+          testhelper.logError(err);
+          if (err) reject(err)
 
-        expect(typeof filters).toBe('object');
-        expect(Object.keys(filters).length).not.toBe(0);
+          expect(typeof filters).toBe('object');
+          expect(Object.keys(filters).length).not.toBe(0);
 
-        expect('anull' in filters).toBe(true);
-        expect('description' in filters.anull).toBe(true);
-        expect(typeof filters.anull.description).toBe('string');
-        expect('input' in filters.anull).toBe(true);
-        expect(typeof filters.anull.input).toBe('string');
-        expect('output' in filters.anull).toBe(true);
-        expect(typeof filters.anull.output).toBe('string');
-        expect('multipleInputs' in filters.anull).toBe(true);
-        expect(typeof filters.anull.multipleInputs).toBe('boolean');
-        expect('multipleOutputs' in filters.anull).toBe(true);
-        expect(typeof filters.anull.multipleOutputs).toBe('boolean');
-        resolve()
-      });
-    })
+          expect('anull' in filters).toBe(true);
+          expect('description' in filters.anull).toBe(true);
+          expect(typeof filters.anull.description).toBe('string');
+          expect('input' in filters.anull).toBe(true);
+          expect(typeof filters.anull.input).toBe('string');
+          expect('output' in filters.anull).toBe(true);
+          expect(typeof filters.anull.output).toBe('string');
+          expect('multipleInputs' in filters.anull).toBe(true);
+          expect(typeof filters.anull.multipleInputs).toBe('boolean');
+          expect('multipleOutputs' in filters.anull).toBe(true);
+          expect(typeof filters.anull.multipleOutputs).toBe('boolean');
+          resolve()
+        });
+      })
     });
 
     it('should enable querying capabilities without instanciating a command', () => {
       return new Promise((resolve, reject) => {
-      Ffmpeg.getAvailableCodecs((err, codecs) => {
-        testhelper.logError(err);
-        if(err) reject(err);
-
-        expect(typeof codecs).toBe('object');
-        expect(Object.keys(codecs).length).not.toBe(0);
-
-        Ffmpeg.getAvailableFilters((err, filters) => {
+        Ffmpeg.getAvailableCodecs((err, codecs) => {
           testhelper.logError(err);
-          assert.ok(!err);
+          if (err) reject(err);
 
-          expect(filters).toBeTypeOf('object');
-          expect(Object.keys(filters).length).not.toBe(0);
+          expect(typeof codecs).toBe('object');
+          expect(Object.keys(codecs).length).not.toBe(0);
 
-          Ffmpeg.getAvailableFormats((err, formats) => {
+          Ffmpeg.getAvailableFilters((err, filters) => {
             testhelper.logError(err);
             assert.ok(!err);
 
-            expect(typeof formats).toBe('object');
-            expect(Object.keys(formats).length).not.toBe(0);
-            resolve()
+            expect(filters).toBeTypeOf('object');
+            expect(Object.keys(filters).length).not.toBe(0);
+
+            Ffmpeg.getAvailableFormats((err, formats) => {
+              testhelper.logError(err);
+              assert.ok(!err);
+
+              expect(typeof formats).toBe('object');
+              expect(Object.keys(formats).length).not.toBe(0);
+              resolve()
+            });
           });
         });
-      });
-    })
+      })
     });
 
     it('should enable checking command arguments for available codecs, formats and encoders', () => {
       return new Promise((resolve, reject) => {
-      async.waterfall([
-        // Check with everything available
-        (cb) => {
-          new Ffmpeg('/path/to/file.avi')
-            .fromFormat('avi')
-            .audioCodec('pcm_u16le')
-            .videoCodec('png')
-            .toFormat('mp4')
-            ._checkCapabilities(cb);
-        },
+        async.waterfall([
+          // Check with everything available
+          (cb) => {
+            new Ffmpeg('/path/to/file.avi')
+              .fromFormat('avi')
+              .audioCodec('pcm_u16le')
+              .videoCodec('png')
+              .toFormat('mp4')
+              ._checkCapabilities(cb);
+          },
 
-        // Invalid input format
-        (cb) => {
-          new Ffmpeg('/path/to/file.avi')
-            .fromFormat('invalid-input-format')
-            .audioCodec('pcm_u16le')
-            .videoCodec('png')
-            .toFormat('mp4')
-            ._checkCapabilities((err) => {
-              assert.ok(!!err);
-              expect(err.message).toMatch(/Input format invalid-input-format is not available/);
+          // Invalid input format
+          (cb) => {
+            new Ffmpeg('/path/to/file.avi')
+              .fromFormat('invalid-input-format')
+              .audioCodec('pcm_u16le')
+              .videoCodec('png')
+              .toFormat('mp4')
+              ._checkCapabilities((err) => {
+                assert.ok(!!err);
+                expect(err.message).toMatch(/Input format invalid-input-format is not available/);
 
-              cb();
-            });
-        },
+                cb();
+              });
+          },
 
-        // Invalid output format
-        (cb) => {
-          new Ffmpeg('/path/to/file.avi')
-            .fromFormat('avi')
-            .audioCodec('pcm_u16le')
-            .videoCodec('png')
-            .toFormat('invalid-output-format')
-            ._checkCapabilities((err) => {
-              assert.ok(!!err);
-              expect(err.message).toMatch(/Output format invalid-output-format is not available/);
+          // Invalid output format
+          (cb) => {
+            new Ffmpeg('/path/to/file.avi')
+              .fromFormat('avi')
+              .audioCodec('pcm_u16le')
+              .videoCodec('png')
+              .toFormat('invalid-output-format')
+              ._checkCapabilities((err) => {
+                assert.ok(!!err);
+                expect(err.message).toMatch(/Output format invalid-output-format is not available/);
 
-              cb();
-            });
-        },
+                cb();
+              });
+          },
 
-        // Invalid audio codec
-        (cb) => {
-          new Ffmpeg('/path/to/file.avi')
-            .fromFormat('avi')
-            .audioCodec('invalid-audio-codec')
-            .videoCodec('png')
-            .toFormat('mp4')
-            ._checkCapabilities((err) => {
-              assert.ok(!!err);
-              expect(err.message).toMatch(/Audio codec invalid-audio-codec is not available/);
+          // Invalid audio codec
+          (cb) => {
+            new Ffmpeg('/path/to/file.avi')
+              .fromFormat('avi')
+              .audioCodec('invalid-audio-codec')
+              .videoCodec('png')
+              .toFormat('mp4')
+              ._checkCapabilities((err) => {
+                assert.ok(!!err);
+                expect(err.message).toMatch(/Audio codec invalid-audio-codec is not available/);
 
-              cb();
-            });
-        },
+                cb();
+              });
+          },
 
-        // Invalid video codec
-        (cb) => {
-          new Ffmpeg('/path/to/file.avi')
-            .fromFormat('avi')
-            .audioCodec('pcm_u16le')
-            .videoCodec('invalid-video-codec')
-            .toFormat('mp4')
-            ._checkCapabilities((err) => {
-              assert.ok(!!err);
-              expect(err.message).toMatch(/Video codec invalid-video-codec is not available/);
+          // Invalid video codec
+          (cb) => {
+            new Ffmpeg('/path/to/file.avi')
+              .fromFormat('avi')
+              .audioCodec('pcm_u16le')
+              .videoCodec('invalid-video-codec')
+              .toFormat('mp4')
+              ._checkCapabilities((err) => {
+                assert.ok(!!err);
+                expect(err.message).toMatch(/Video codec invalid-video-codec is not available/);
 
-              cb();
-            });
-        },
+                cb();
+              });
+          },
 
-        // Invalid audio encoder
-        (cb) => {
-          new Ffmpeg('/path/to/file.avi')
-            .fromFormat('avi')
-            // Valid codec, but not a valid encoder for audio
-            .audioCodec('png')
-            .videoCodec('png')
-            .toFormat('mp4')
-            ._checkCapabilities((err) => {
-              assert.ok(!!err);
-              expect(err.message).toMatch(/Audio codec png is not available/);
+          // Invalid audio encoder
+          (cb) => {
+            new Ffmpeg('/path/to/file.avi')
+              .fromFormat('avi')
+              // Valid codec, but not a valid encoder for audio
+              .audioCodec('png')
+              .videoCodec('png')
+              .toFormat('mp4')
+              ._checkCapabilities((err) => {
+                assert.ok(!!err);
+                expect(err.message).toMatch(/Audio codec png is not available/);
 
-              cb();
-            });
-        },
+                cb();
+              });
+          },
 
-        // Invalid video encoder
-        (cb) => {
-          new Ffmpeg('/path/to/file.avi')
-            .fromFormat('avi')
-            .audioCodec('pcm_u16le')
-            // Valid codec, but not a valid encoder for video
-            .videoCodec('pcm_u16le')
-            .toFormat('mp4')
-            ._checkCapabilities((err) => {
-              assert.ok(!!err);
-              expect(err.message).toMatch(/Video codec pcm_u16le is not available/);
+          // Invalid video encoder
+          (cb) => {
+            new Ffmpeg('/path/to/file.avi')
+              .fromFormat('avi')
+              .audioCodec('pcm_u16le')
+              // Valid codec, but not a valid encoder for video
+              .videoCodec('pcm_u16le')
+              .toFormat('mp4')
+              ._checkCapabilities((err) => {
+                assert.ok(!!err);
+                expect(err.message).toMatch(/Video codec pcm_u16le is not available/);
 
-              cb();
-            });
-        }
-      ], (err) => {
-        testhelper.logError(err);
-        assert.ok(!err);
-        resolve()
-      });
-    })
+                cb();
+              });
+          }
+        ], (err) => {
+          testhelper.logError(err);
+          assert.ok(!err);
+          resolve()
+        });
+      })
     });
 
     it('should check capabilities before running a command', () => {
       return new Promise((resolve, reject) => {
-      new Ffmpeg('/path/to/file.avi')
-        .on('error', (err) => {
-          expect(err.message).toMatch(/Output format invalid-output-format is not available/);
-          resolve()
-        })
-        .toFormat('invalid-output-format')
-        .saveToFile('/tmp/will-not-be-created.mp4');
+        new Ffmpeg('/path/to/file.avi')
+          .on('error', (err) => {
+            expect(err.message).toMatch(/Output format invalid-output-format is not available/);
+            resolve()
+          })
+          .toFormat('invalid-output-format')
+          .saveToFile('/tmp/will-not-be-created.mp4');
       })
     });
   });
@@ -292,14 +292,14 @@ describe('Capabilities', () => {
 
       ff.setFfmpegPath('/doom/di/dom');
       return new Promise((resolve) => {
-      ff._getFfmpegPath((err, ffmpeg) => {
-        testhelper.logError(err);
-        assert.ok(!err);
+        ff._getFfmpegPath((err, ffmpeg) => {
+          testhelper.logError(err);
+          assert.ok(!err);
 
-        expect(ffmpeg).toBe('/doom/di/dom');
-        resolve()
-      });
-    })
+          expect(ffmpeg).toBe('/doom/di/dom');
+          resolve()
+        });
+      })
     });
 
     it('should allow static manual definition of ffmpeg binary path', () => {
@@ -307,14 +307,14 @@ describe('Capabilities', () => {
 
       Ffmpeg.setFfmpegPath('/doom/di/dom2');
       return new Promise((resolve) => {
-      ff._getFfmpegPath((err, ffmpeg) => {
-        testhelper.logError(err);
-        assert.ok(!err);
+        ff._getFfmpegPath((err, ffmpeg) => {
+          testhelper.logError(err);
+          assert.ok(!err);
 
-        expect(ffmpeg).toBe('/doom/di/dom2');
-        resolve()
-      });
-    })
+          expect(ffmpeg).toBe('/doom/di/dom2');
+          resolve()
+        });
+      })
     });
 
     it('should look for ffmpeg in the PATH if FFMPEG_PATH is not defined', () => {
@@ -324,18 +324,18 @@ describe('Capabilities', () => {
 
       ff._forgetPaths();
       return new Promise((resolve) => {
-      ff._getFfmpegPath((err, ffmpeg) => {
-        testhelper.logError(err);
-        assert.ok(!err);
+        ff._getFfmpegPath((err, ffmpeg) => {
+          testhelper.logError(err);
+          assert.ok(!err);
 
-        expect(typeof ffmpeg).toBe('string');
-        expect(ffmpeg.length).toBeGreaterThan(0);
+          expect(typeof ffmpeg).toBe('string');
+          expect(ffmpeg.length).toBeGreaterThan(0);
 
-        var paths = process.env.PATH.split(PATH_DELIMITER);
-        expect(paths.indexOf(path.dirname(ffmpeg))).toBeGreaterThan(-1);
-        resolve()
-      });
-    })
+          var paths = process.env.PATH.split(PATH_DELIMITER);
+          expect(paths.indexOf(path.dirname(ffmpeg))).toBeGreaterThan(-1);
+          resolve()
+        });
+      })
     });
 
     (skipAltTest ? it.skip : it)('should use FFMPEG_PATH if defined and valid', () => {
@@ -345,14 +345,14 @@ describe('Capabilities', () => {
 
       ff._forgetPaths();
       return new Promise((resolve) => {
-      ff._getFfmpegPath((err, ffmpeg) => {
-        testhelper.logError(err);
-        assert.ok(!err);
+        ff._getFfmpegPath((err, ffmpeg) => {
+          testhelper.logError(err);
+          assert.ok(!err);
 
-        expect(ffmpeg).toBe(ALT_FFMPEG_PATH);
-        resolve()
-      });
-    })
+          expect(ffmpeg).toBe(ALT_FFMPEG_PATH);
+          resolve()
+        });
+      })
     });
 
     it('should fall back to searching in the PATH if FFMPEG_PATH is invalid', () => {
@@ -362,18 +362,18 @@ describe('Capabilities', () => {
 
       ff._forgetPaths();
       return new Promise((resolve) => {
-      ff._getFfmpegPath((err, ffmpeg) => {
-        testhelper.logError(err);
-        assert.ok(!err);
+        ff._getFfmpegPath((err, ffmpeg) => {
+          testhelper.logError(err);
+          assert.ok(!err);
 
-        expect(typeof ffmpeg).toBe('string');
-        expect(ffmpeg.length).toBeGreaterThan(0);
+          expect(typeof ffmpeg).toBe('string');
+          expect(ffmpeg.length).toBeGreaterThan(0);
 
-        var paths = process.env.PATH.split(PATH_DELIMITER);
-        expect(paths.indexOf(path.dirname(ffmpeg))).toBeGreaterThan(-1);
-        resolve()
-      });
-    })
+          var paths = process.env.PATH.split(PATH_DELIMITER);
+          expect(paths.indexOf(path.dirname(ffmpeg))).toBeGreaterThan(-1);
+          resolve()
+        });
+      })
     });
 
     it('should remember ffmpeg path', () => {
@@ -383,29 +383,29 @@ describe('Capabilities', () => {
 
       ff._forgetPaths();
       return new Promise((resolve) => {
-      ff._getFfmpegPath((err, ffmpeg) => {
-        testhelper.logError(err);
-        assert.ok(!err);
-
-        expect(typeof ffmpeg).toBe('string');
-        expect(ffmpeg.length).toBeGreaterThan(0);
-
-        // Just check that the callback is actually called synchronously
-        // (which indicates no which call was made)
-        var after = 0;
         ff._getFfmpegPath((err, ffmpeg) => {
           testhelper.logError(err);
           assert.ok(!err);
 
           expect(typeof ffmpeg).toBe('string');
           expect(ffmpeg.length).toBeGreaterThan(0);
-          expect(after).toBe(0);
-          resolve()
-        });
 
-        after = 1;
-      });
-    })
+          // Just check that the callback is actually called synchronously
+          // (which indicates no which call was made)
+          var after = 0;
+          ff._getFfmpegPath((err, ffmpeg) => {
+            testhelper.logError(err);
+            assert.ok(!err);
+
+            expect(typeof ffmpeg).toBe('string');
+            expect(ffmpeg.length).toBeGreaterThan(0);
+            expect(after).toBe(0);
+            resolve()
+          });
+
+          after = 1;
+        });
+      })
     });
   });
 
@@ -441,14 +441,14 @@ describe('Capabilities', () => {
 
       ff.setFfprobePath('/doom/di/dom');
       return new Promise((resolve) => {
-      ff._getFfprobePath((err, ffprobe) => {
-        testhelper.logError(err);
-        assert.ok(!err);
+        ff._getFfprobePath((err, ffprobe) => {
+          testhelper.logError(err);
+          assert.ok(!err);
 
-        expect(ffprobe).toBe('/doom/di/dom');
-        resolve()
-      });
-    })
+          expect(ffprobe).toBe('/doom/di/dom');
+          resolve()
+        });
+      })
     });
 
     it('should allow static manual definition of ffprobe binary path', () => {
@@ -456,14 +456,14 @@ describe('Capabilities', () => {
 
       Ffmpeg.setFfprobePath('/doom/di/dom2');
       return new Promise((resolve) => {
-      ff._getFfprobePath((err, ffprobe) => {
-        testhelper.logError(err);
-        assert.ok(!err);
+        ff._getFfprobePath((err, ffprobe) => {
+          testhelper.logError(err);
+          assert.ok(!err);
 
-        expect(ffprobe).toBe('/doom/di/dom2');
-        resolve()
-      });
-    })
+          expect(ffprobe).toBe('/doom/di/dom2');
+          resolve()
+        });
+      })
     });
 
     it('should look for ffprobe in the PATH if FFPROBE_PATH is not defined', () => {
@@ -473,18 +473,18 @@ describe('Capabilities', () => {
 
       ff._forgetPaths();
       return new Promise((resolve) => {
-      ff._getFfprobePath((err, ffprobe) => {
-        testhelper.logError(err);
-        assert.ok(!err);
+        ff._getFfprobePath((err, ffprobe) => {
+          testhelper.logError(err);
+          assert.ok(!err);
 
-        expect(typeof ffprobe).toBe('string');
-        expect(ffprobe.length).toBeGreaterThan(0);
+          expect(typeof ffprobe).toBe('string');
+          expect(ffprobe.length).toBeGreaterThan(0);
 
-        var paths = process.env.PATH.split(PATH_DELIMITER);
-        expect(paths.indexOf(path.dirname(ffprobe))).toBeGreaterThan(-1);
-        resolve()
-      });
-    })
+          var paths = process.env.PATH.split(PATH_DELIMITER);
+          expect(paths.indexOf(path.dirname(ffprobe))).toBeGreaterThan(-1);
+          resolve()
+        });
+      })
     });
 
     (skipAltTest ? it.skip : it)('should use FFPROBE_PATH if defined and valid', () => {
@@ -494,14 +494,14 @@ describe('Capabilities', () => {
 
       ff._forgetPaths();
       return new Promise((resolve) => {
-      ff._getFfprobePath((err, ffprobe) => {
-        testhelper.logError(err);
-        assert.ok(!err);
+        ff._getFfprobePath((err, ffprobe) => {
+          testhelper.logError(err);
+          assert.ok(!err);
 
-        expect(ffprobe).toBe(ALT_FFPROBE_PATH);
-        resolve()
-      });
-    })
+          expect(ffprobe).toBe(ALT_FFPROBE_PATH);
+          resolve()
+        });
+      })
     });
 
     it('should fall back to searching in the PATH if FFPROBE_PATH is invalid', () => {
@@ -511,18 +511,18 @@ describe('Capabilities', () => {
 
       ff._forgetPaths();
       return new Promise((resolve) => {
-      ff._getFfprobePath((err, ffprobe) => {
-        testhelper.logError(err);
-        assert.ok(!err);
+        ff._getFfprobePath((err, ffprobe) => {
+          testhelper.logError(err);
+          assert.ok(!err);
 
-        expect(typeof ffprobe).toBe('string');
-        expect(ffprobe.length).toBeGreaterThan(0);
+          expect(typeof ffprobe).toBe('string');
+          expect(ffprobe.length).toBeGreaterThan(0);
 
-        var paths = process.env.PATH.split(PATH_DELIMITER);
-        expect(paths.indexOf(path.dirname(ffprobe))).toBeGreaterThan(-1);
-        resolve()
-      });
-    })
+          var paths = process.env.PATH.split(PATH_DELIMITER);
+          expect(paths.indexOf(path.dirname(ffprobe))).toBeGreaterThan(-1);
+          resolve()
+        });
+      })
     });
 
     it('should remember ffprobe path', () => {
@@ -532,30 +532,30 @@ describe('Capabilities', () => {
 
       ff._forgetPaths();
       return new Promise((resolve) => {
-      ff._getFfprobePath((err, ffprobe) => {
-        testhelper.logError(err);
-        assert.ok(!err);
-
-        expect(typeof ffprobe).toBe('string');
-        expect(ffprobe.length).toBeGreaterThan(0);
-
-        // Just check that the callback is actually called synchronously
-        // (which indicates no which call was made)
-        var after = 0;
         ff._getFfprobePath((err, ffprobe) => {
           testhelper.logError(err);
           assert.ok(!err);
 
           expect(typeof ffprobe).toBe('string');
           expect(ffprobe.length).toBeGreaterThan(0);
-          expect(after).toBe(0);
 
-          resolve()
+          // Just check that the callback is actually called synchronously
+          // (which indicates no which call was made)
+          var after = 0;
+          ff._getFfprobePath((err, ffprobe) => {
+            testhelper.logError(err);
+            assert.ok(!err);
+
+            expect(typeof ffprobe).toBe('string');
+            expect(ffprobe.length).toBeGreaterThan(0);
+            expect(after).toBe(0);
+
+            resolve()
+          });
+
+          after = 1;
         });
-
-        after = 1;
-      });
-    })
+      })
     });
   });
 
@@ -564,7 +564,7 @@ describe('Capabilities', () => {
     var ALT_FLVTOOL_PATH;
     var skipAltTest = false;
     var skipTest = false;
-    
+
     if (process.env.FLVTOOL2_PRESENT === 'no') {
       skipTest = true;
     }
@@ -596,14 +596,14 @@ describe('Capabilities', () => {
 
       ff.setFlvtoolPath('/doom/di/dom');
       return new Promise((resolve) => {
-      ff._getFlvtoolPath((err, fflvtool) => {
-        testhelper.logError(err);
-        expect(err).toBeNull();
+        ff._getFlvtoolPath((err, fflvtool) => {
+          testhelper.logError(err);
+          expect(err).toBeNull();
 
-        expect(fflvtool).toBe('/doom/di/dom');
-        resolve()
-      });
-    })
+          expect(fflvtool).toBe('/doom/di/dom');
+          resolve()
+        });
+      })
     });
 
     (skipTest ? it.skip : it)('should allow static manual definition of fflvtool binary path', () => {
@@ -611,13 +611,13 @@ describe('Capabilities', () => {
 
       Ffmpeg.setFlvtoolPath('/doom/di/dom2');
       return new Promise((resolve) => {
-      ff._getFlvtoolPath((err, fflvtool) => {
-        testhelper.logError(err);
-        expect(err).toBeNull();
-        expect(fflvtool).toBe('/doom/di/dom2')
-        resolve()
+        ff._getFlvtoolPath((err, fflvtool) => {
+          testhelper.logError(err);
+          expect(err).toBeNull();
+          expect(fflvtool).toBe('/doom/di/dom2')
+          resolve()
+        });
       });
-    });
     });
 
     (skipTest ? it.skip : it)('should look for fflvtool in the PATH if FLVTOOL2_PATH is not defined', () => {
@@ -627,17 +627,17 @@ describe('Capabilities', () => {
       return new Promise((resolve) => {
         ff._forgetPaths();
         ff._getFlvtoolPath((err, fflvtool) => {
-        testhelper.logError(err);
-        expect(err).toBeNull();
+          testhelper.logError(err);
+          expect(err).toBeNull();
 
-        expect(typeof fflvtool).toBe('string');
-        expect(fflvtool.length).toBeGreaterThan(0);
+          expect(typeof fflvtool).toBe('string');
+          expect(fflvtool.length).toBeGreaterThan(0);
 
-        var paths = process.env.PATH.split(PATH_DELIMITER);
-        expect(paths).toContain(path.dirname(fflvtool))
-        resolve()
-      });
-    })
+          var paths = process.env.PATH.split(PATH_DELIMITER);
+          expect(paths).toContain(path.dirname(fflvtool))
+          resolve()
+        });
+      })
     });
 
     (skipTest || skipAltTest ? it.skip : it)('should use FLVTOOL2_PATH if defined and valid', () => {
@@ -648,13 +648,13 @@ describe('Capabilities', () => {
       return new Promise((resolve) => {
         ff._forgetPaths();
         ff._getFlvtoolPath((err, fflvtool) => {
-        testhelper.logError(err);
-        expect(err).toBeNull();
+          testhelper.logError(err);
+          expect(err).toBeNull();
 
-        expect(fflvtool).toBe(ALT_FLVTOOL_PATH);
-        resolve()
-      });
-    })
+          expect(fflvtool).toBe(ALT_FLVTOOL_PATH);
+          resolve()
+        });
+      })
     });
 
     (skipTest ? it.skip : it)('should fall back to searching in the PATH if FLVTOOL2_PATH is invalid', () => {
@@ -664,18 +664,18 @@ describe('Capabilities', () => {
 
       ff._forgetPaths();
       return new Promise((resolve) => {
-      ff._getFlvtoolPath((err, fflvtool) => {
-        testhelper.logError(err);
-        expect(err).toBeNull();
+        ff._getFlvtoolPath((err, fflvtool) => {
+          testhelper.logError(err);
+          expect(err).toBeNull();
 
-        expect(typeof fflvtool).toBe('string');
-        expect(fflvtool.length).toBeGreaterThan(0);
+          expect(typeof fflvtool).toBe('string');
+          expect(fflvtool.length).toBeGreaterThan(0);
 
-        var paths = process.env.PATH.split(PATH_DELIMITER);
-        expect(paths).toContain(path.dirname(fflvtool));
-        resolve()
-      });
-    })
+          var paths = process.env.PATH.split(PATH_DELIMITER);
+          expect(paths).toContain(path.dirname(fflvtool));
+          resolve()
+        });
+      })
     });
 
     (skipTest ? it.skip : it)('should remember fflvtool path', () => {
@@ -685,30 +685,30 @@ describe('Capabilities', () => {
 
       ff._forgetPaths();
       return new Promise((resolve) => {
-      ff._getFlvtoolPath((err, fflvtool) => {
-        testhelper.logError(err);
-        expect(err).toBeNull();
-
-        expect(typeof fflvtool).toBe('string');
-        expect(fflvtool.length).toBeGreaterThan(0);
-
-        // Just check that the callback is actually called synchronously
-        // (which indicates no which call was made)
-        var after = 0;
         ff._getFlvtoolPath((err, fflvtool) => {
           testhelper.logError(err);
           expect(err).toBeNull();
 
           expect(typeof fflvtool).toBe('string');
           expect(fflvtool.length).toBeGreaterThan(0);
-          expect(after).toBe(0);
 
-          resolve()
+          // Just check that the callback is actually called synchronously
+          // (which indicates no which call was made)
+          var after = 0;
+          ff._getFlvtoolPath((err, fflvtool) => {
+            testhelper.logError(err);
+            expect(err).toBeNull();
+
+            expect(typeof fflvtool).toBe('string');
+            expect(fflvtool.length).toBeGreaterThan(0);
+            expect(after).toBe(0);
+
+            resolve()
+          });
+
+          after = 1;
         });
-
-        after = 1;
-      });
-    })
+      })
     });
   });
 

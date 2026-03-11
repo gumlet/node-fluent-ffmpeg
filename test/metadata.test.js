@@ -19,24 +19,24 @@ describe('Metadata', () => {
   let testfile
   beforeAll(() => {
     // check for ffmpeg installation
-    
+
     testfile = path.join(__dirname, 'assets', 'testvideo-43.avi');
     return new Promise((resolve, reject) => {
-    exec(testhelper.getFfmpegCheck(), (err) => {
-      if (!err) {
-        // check if file exists
-        fs.access(testfile, fs.constants.F_OK, (err) => {
-          if (!err) {
-            resolve()
-          } else {
-            reject(new Error(`test video file does not exist, check path (${testfile})`));
-          }
-        });
-      } else {
-        reject(new Error('cannot run test without ffmpeg installed, aborting test...'));
-      }
-    });
-  })
+      exec(testhelper.getFfmpegCheck(), (err) => {
+        if (!err) {
+          // check if file exists
+          fs.access(testfile, fs.constants.F_OK, (err) => {
+            if (!err) {
+              resolve()
+            } else {
+              reject(new Error(`test video file does not exist, check path (${testfile})`));
+            }
+          });
+        } else {
+          reject(new Error('cannot run test without ffmpeg installed, aborting test...'));
+        }
+      });
+    })
   });
 
   it('should provide an ffprobe entry point', () => {
@@ -73,34 +73,34 @@ describe('Metadata', () => {
 
   it('should provide ffprobe stream information', () => {
     return new Promise((resolve) => {
-    Ffmpeg.ffprobe(testfile, (err, data) => {
-      testhelper.logError(err);
-      assert.ok(!err);
+      Ffmpeg.ffprobe(testfile, (err, data) => {
+        testhelper.logError(err);
+        assert.ok(!err);
 
-      expect('streams' in data).toBe(true);
-      expect(Array.isArray(data.streams)).toBe(true);
-      expect(data.streams.length).toBe(1);
-      expect(data.streams[0].codec_type).toBe('video');
-      expect(data.streams[0].codec_name).toBe('mpeg4');
-      expect(Number(data.streams[0].width)).toBe(1024);
-      resolve()
-    });
-  })
+        expect('streams' in data).toBe(true);
+        expect(Array.isArray(data.streams)).toBe(true);
+        expect(data.streams.length).toBe(1);
+        expect(data.streams[0].codec_type).toBe('video');
+        expect(data.streams[0].codec_name).toBe('mpeg4');
+        expect(Number(data.streams[0].width)).toBe(1024);
+        resolve()
+      });
+    })
   });
 
   it('should provide ffprobe stream information with units', () => {
     return new Promise((resolve) => {
-    Ffmpeg.ffprobe(testfile, ['-unit'], (err, data) => {
-      testhelper.logError(err);
-      assert.ok(!err);
+      Ffmpeg.ffprobe(testfile, ['-unit'], (err, data) => {
+        testhelper.logError(err);
+        assert.ok(!err);
 
-      expect('streams' in data).toBe(true);
-      expect(Array.isArray(data.streams)).toBe(true);
-      expect(data.streams.length).toBe(1);
-      expect(data.streams[0].bit_rate).toBe('322427 bit/s');
-      resolve()
-    });
-  })
+        expect('streams' in data).toBe(true);
+        expect(Array.isArray(data.streams)).toBe(true);
+        expect(data.streams.length).toBe(1);
+        expect(data.streams[0].bit_rate).toBe('322427 bit/s');
+        resolve()
+      });
+    })
   });
 
   it('should return ffprobe errors', () => {
@@ -114,18 +114,18 @@ describe('Metadata', () => {
 
   it('should enable calling ffprobe on a command with an input file', () => {
     return new Promise((resolve) => {
-    new Ffmpeg({ source: testfile })
-      .ffprobe((err, data) => {
-        testhelper.logError(err);
-        assert.ok(!err);
+      new Ffmpeg({ source: testfile })
+        .ffprobe((err, data) => {
+          testhelper.logError(err);
+          assert.ok(!err);
 
-        expect(typeof data).toBe('object');
-        expect('format' in data).toBe(true);
-        expect(typeof data.format).toBe('object');
-        expect('streams' in data).toBe(true);
-        expect(Array.isArray(data.streams)).toBe(true);
-        resolve()
-      });
+          expect(typeof data).toBe('object');
+          expect('format' in data).toBe(true);
+          expect(typeof data.format).toBe('object');
+          expect('streams' in data).toBe(true);
+          expect(Array.isArray(data.streams)).toBe(true);
+          resolve()
+        });
     })
   });
 
@@ -140,14 +140,14 @@ describe('Metadata', () => {
     var stream = fs.createReadStream(testfile);
 
     return new Promise((resolve) => {
-    new Ffmpeg()
-      .addInput(stream)
-      .ffprobe((err, data) => {
-        assert.ok(!err);
-        expect(data.streams.length).toBe(1);
-        expect(data.format.filename).toBe('pipe:0');
-        resolve();
-      });
+      new Ffmpeg()
+        .addInput(stream)
+        .ffprobe((err, data) => {
+          assert.ok(!err);
+          expect(data.streams.length).toBe(1);
+          expect(data.format.filename).toBe('pipe:0');
+          resolve();
+        });
     })
   });
 });

@@ -12,19 +12,19 @@ import util from 'node:util';
 const __dirname = import.meta.dirname;
 const exec = util.promisify(require('node:child_process').exec);
 
-Ffmpeg.prototype._test_getArgs = function(callback) {
+Ffmpeg.prototype._test_getArgs = function (callback) {
   var args;
 
   try {
     args = this._getArguments();
-  } catch(e) {
+  } catch (e) {
     return callback(null, e);
   }
 
   callback(args);
 };
 
-Ffmpeg.prototype._test_getSizeFilters = function() {
+Ffmpeg.prototype._test_getSizeFilters = function () {
   return utils.makeFilterStrings(this._currentOutput.sizeFilters.get())
     .concat(this._currentOutput.videoFilters.get());
 };
@@ -63,7 +63,7 @@ describe('Command', () => {
         .usingPreset('custompreset')
         ._test_getArgs((args) => {
           expect(args.length).toBe(42)
-      });
+        });
     });
 
     it('should allow using functions as presets', () => {
@@ -378,10 +378,10 @@ describe('Command', () => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
-          if(args.indexOf('-loop') !== -1 || args.indexOf('-loop_output') !== -1){
+          if (args.indexOf('-loop') !== -1 || args.indexOf('-loop_output') !== -1) {
             // everything is good
           }
-          else{
+          else {
             throw new Error('args should contain loop or loop_output');
           }
         });
@@ -393,11 +393,11 @@ describe('Command', () => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
-          if(args.indexOf('-loop') !== -1 || args.indexOf('-loop_output') !== -1){
+          if (args.indexOf('-loop') !== -1 || args.indexOf('-loop_output') !== -1) {
             expect(args).toContain('-t');
             expect(args).toContain(120);
           }
-          else{
+          else {
             throw new Error('args should contain loop or loop_output');
           }
         });
@@ -409,11 +409,11 @@ describe('Command', () => {
           testhelper.logArgError(err);
           assert.ok(!err);
 
-          if(args.indexOf('-loop') !== -1 || args.indexOf('-loop_output') !== -1){
+          if (args.indexOf('-loop') !== -1 || args.indexOf('-loop_output') !== -1) {
             expect(args).toContain('-t');
             expect(args).toContain('00:06:46.81');
           }
-          else{
+          else {
             throw new Error('args should contain loop or loop_output');
           }
         });
@@ -591,7 +591,7 @@ describe('Command', () => {
     });
     it('should apply supplied extra options', () => {
       new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .addOptions(['-flags', '+loop', '-cmp', '+chroma', '-partitions','+parti4x4+partp8x8+partb8x8'])
+        .addOptions(['-flags', '+loop', '-cmp', '+chroma', '-partitions', '+parti4x4+partp8x8+partb8x8'])
         .addOptions('-single option')
         .addOptions('-multiple', '-options')
         ._test_getArgs((args, err) => {
@@ -684,7 +684,7 @@ describe('Command', () => {
         ._test_getSizeFilters().length).toEqual(0);
 
       expect(new Ffmpeg({ source: testfile, logger: testhelper.logger })
-        .withAspect(4/3)
+        .withAspect(4 / 3)
         ._test_getSizeFilters().length).toEqual(0);
 
       expect(new Ffmpeg({ source: testfile, logger: testhelper.logger })
@@ -703,7 +703,7 @@ describe('Command', () => {
 
       filters = new Ffmpeg({ source: testfile, logger: testhelper.logger })
         .withSize('42%')
-        .withAspect(4/3)
+        .withAspect(4 / 3)
         ._test_getSizeFilters();
       expect(filters).toHaveLength(1);
       expect(filters[0]).toEqual('scale=w=trunc(iw*0.42/2)*2:h=trunc(ih*0.42/2)*2');
@@ -727,7 +727,7 @@ describe('Command', () => {
 
       filters = new Ffmpeg({ source: testfile, logger: testhelper.logger })
         .withSize('100x200')
-        .withAspect(4/3)
+        .withAspect(4 / 3)
         ._test_getSizeFilters();
       expect(filters).toHaveLength(1);
       expect(filters[0]).toEqual('scale=w=100:h=200');
@@ -816,7 +816,7 @@ describe('Command', () => {
 
       filters = new Ffmpeg({ source: testfile, logger: testhelper.logger })
         .withSize('100x200')
-        .withAspect(4/3)
+        .withAspect(4 / 3)
         .applyAutopadding(true, 'white')
         ._test_getSizeFilters();
       expect(filters).toHaveLength(2);
@@ -833,7 +833,7 @@ describe('Command', () => {
 
       filters = new Ffmpeg({ source: testfile, logger: testhelper.logger })
         .withSize('200x100')
-        .withAspect(4/3)
+        .withAspect(4 / 3)
         .applyAutopadding(true, 'white')
         ._test_getSizeFilters();
       expect(filters).toHaveLength(2);
@@ -843,7 +843,7 @@ describe('Command', () => {
 
     it('Should round sizes to multiples of 2', () => {
       var filters;
-      var aspect = 102/202;
+      var aspect = 102 / 202;
 
       filters = new Ffmpeg({ source: testfile, logger: testhelper.logger })
         .withSize('101x201')
