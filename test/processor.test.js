@@ -126,7 +126,7 @@ describe('Processor', () => {
 
   });
 
-  afterEach(function cleanup() {
+  afterEach(function cleanup(context) {
 
     async.series([
         // Ensure every process has finished
@@ -136,8 +136,7 @@ describe('Processor', () => {
               testhelper.logOutput(outputs[0][0], outputs[0][1]);
             }
 
-            throw new Error(`${processes.length} processes still running after "${this.currentTest.title}"`);
-            cb();
+            throw new Error(`${processes.length} processes still running after "${context.task.name}"`);
           } else {
             cb();
           }
@@ -153,9 +152,7 @@ describe('Processor', () => {
                 if (outputs.length) {
                   testhelper.logOutput(outputs[0][0], outputs[0][1]);
                 }
-
-                throw new Error(`Expected created file ${file} by "${this.currentTest.title}"`);
-                cb();
+                throw new Error(`Expected created file ${file} by "${context.task.name}"`);
               }
             });
           }, cb);
@@ -172,8 +169,7 @@ describe('Processor', () => {
                   testhelper.logOutput(outputs[0][0], outputs[0][1]);
                 }
 
-                throw new Error(`Expected created directory ${dir} by "${this.currentTest.title}"`);
-                cb();
+                throw new Error(`Expected created directory ${dir} by "${context.task.name}"`);
               }
             });
           }, cb);
@@ -189,8 +185,8 @@ describe('Processor', () => {
     var skipRenice = false;
 
     (skipNiceness ? it.skip : it)('should properly limit niceness', () => {
-      getCommand({ source: testfile, logger: testhelper.logger, timeout: 0.02 })
-          .renice(100).options.niceness.should.equal(20);
+      expect(getCommand({ source: testfile, logger: testhelper.logger, timeout: 0.02 })
+          .renice(100).options.niceness).toBe(20);
     });
 
     ((skipNiceness || skipRenice) ? it.skip : it)('should dynamically renice process', {timeout: 60000}, () => {
@@ -214,19 +210,19 @@ describe('Processor', () => {
               setTimeout(() => {
                 exec(`ps -p ${pid} -o ni=`, (err, stdout) => {
                   assert.ok(!err);
-                  parseInt(stdout, 10).should.equal(5);
+                  expect(parseInt(stdout, 10)).toBe(5);
                   reniced = true;
                 });
               }, 100);
             }, 100);
 
             ffmpegJob.ffmpegProc.on('exit', () => {
-              reniced.should.equal(true);
+              expect(reniced).toBe(true);
             });
           })
           .on('error', () => {
-            reniced.should.equal(true);
-            startCalled.should.equal(true);
+            expect(reniced).toBe(true);
+            expect(startCalled).toBe(true);
           })
           .on('end', () => {
             console.log('end was called, expected a timeout');
@@ -264,7 +260,7 @@ describe('Processor', () => {
           })
           .on('error', (err, stdout, stderr) => {
             saveOutput(stdout, stderr);
-            err.message.indexOf('timeout').should.not.equal(-1);
+            expect(err.message).not.toContain('timeout');
           })
           .on('end', () => {
             console.log('end was called, expected a timeout');
@@ -301,25 +297,23 @@ describe('Processor', () => {
             setTimeout(() => { ffmpegJob.kill(); }, 500);
             ffmpegJob.ffmpegProc.on('exit', () => {
               setTimeout(() => {
-                errorCalled.should.equal(true);
-                done();
+                expect(errorCalled).toBe(true);
               }, 1000);
             });
           })
           .on('error', (err) => {
-            err.message.indexOf('ffmpeg was killed with signal SIGKILL').should.not.equal(-1);
-            startCalled.should.equal(true);
+            expect(err.message).not.toContain('ffmpeg was killed with signal SIGKILL');
+            expect(startCalled).toBe(true);
             errorCalled = true;
           })
           .on('end', () => {
             console.log('end was called, expected an error');
             assert.ok(false);
-            done();
           })
           .saveToFile(testFile);
     });
 
-    it('should send the process custom signals with .kill(signal)',{timeout: 60000}, (done) => {
+    it('should send the process custom signals with .kill(signal)',{timeout: 60000}, () => {
 
       var testFile = path.join(__dirname, 'assets', 'testProcessKillCustom.avi');
       files.push(testFile);
@@ -336,13 +330,12 @@ describe('Processor', () => {
             setTimeout(() => { ffmpegJob.kill('SIGSTOP'); }, 500);
 
             ffmpegJob.ffmpegProc.on('exit', () => {
-              errorCalled.should.equal(true);
-              done();
+              expect(errorCalled).toBe(true);
             });
           })
           .on('error', (err) => {
-            startCalled.should.equal(true);
-            err.message.indexOf('timeout').should.not.equal(-1);
+            expect(startCalled).toBe(true);
+            expect(err.message).not.toContain('timeout');
 
             errorCalled = true;
             ffmpegJob.kill('SIGCONT');
@@ -350,7 +343,6 @@ describe('Processor', () => {
           .on('end', () => {
             console.log('end was called, expected a timeout');
             assert.ok(false);
-            done();
           })
           .saveToFile(testFile);
 
@@ -358,15 +350,15 @@ describe('Processor', () => {
   });
 
   describe('Events', () => {
-    it('should report codec data through \'codecData\' event', {timeout: 60000}, (done) => {
+    it('should report codec data through \'codecData\' event', {timeout: 60000}, () => {
 
       var testFile = path.join(__dirname, 'assets', 'testOnCodecData.avi');
       files.push(testFile);
 
       getCommand({ source: testfilebig, logger: testhelper.logger })
         .on('codecData', (data) => {
-          data.should.have.property('audio');
-          data.should.have.property('video');
+          expect(data).toHaveProperty('audio');
+          expect(data).toHaveProperty('video');
         })
         .usingPreset('divx')
         .on('error', (err, stdout, stderr) => {
@@ -374,20 +366,19 @@ describe('Processor', () => {
           assert.ok(!err);
         })
         .on('end', () => {
-          done();
         })
         .saveToFile(testFile);
     });
 
-    it('should report codec data through \'codecData\' event on piped inputs',{timeout: 60000}, (done) => {
+    it('should report codec data through \'codecData\' event on piped inputs',{timeout: 60000}, () => {
 
       var testFile = path.join(__dirname, 'assets', 'testOnCodecData.avi')
       files.push(testFile);
 
       getCommand({ source: fs.createReadStream(testfilebig), logger: testhelper.logger })
         .on('codecData', (data) => {
-          data.should.have.property('audio');
-          data.should.have.property('video');
+          expect(data).toHaveProperty('audio');
+          expect(data).toHaveProperty('video');
         })
         .usingPreset('divx')
         .on('error', (err, stdout, stderr) => {
@@ -395,12 +386,11 @@ describe('Processor', () => {
           assert.ok(!err);
         })
         .on('end', () => {
-          done();
         })
         .saveToFile(testFile);
     });
 
-    it('should report codec data through \'codecData\' for multiple inputs',{timeout: 60000}, (done) => {
+    it('should report codec data through \'codecData\' for multiple inputs',{timeout: 60000}, () => {
 
       var testFile = path.join(__dirname, 'assets', 'testOnCodecData.wav')
       files.push(testFile);
@@ -409,20 +399,19 @@ describe('Processor', () => {
         .input(testfileaudio1)
         .input(testfileaudio2)
         .on('codecData', (data1, data2) => {
-          data1.should.have.property('audio');
-          data2.should.have.property('audio');
+          expect(data1).toHaveProperty('audio');
+          expect(data2).toHaveProperty('audio');
         })
         .on('error', (err, stdout, stderr) => {
           testhelper.logError(err, stdout, stderr);
           assert.ok(!err);
         })
         .on('end', () => {
-          done();
         })
         .mergeToFile(testFile);
     });
 
-    it('should report progress through \'progress\' event',{timeout: 60000}, (done) => {
+    it('should report progress through \'progress\' event',{timeout: 60000}, () => {
 
       var testFile = path.join(__dirname, 'assets', 'testOnProgress.avi');
       var gotProgress = false;
@@ -439,13 +428,12 @@ describe('Processor', () => {
             assert.ok(!err);
           })
           .on('end', () => {
-            gotProgress.should.equal(true);
-            done();
+            expect(gotProgress).toBe(true);
           })
           .saveToFile(testFile);
     });
 
-    it('should report start of ffmpeg process through \'start\' event',{timeout: 60000}, (done) => {
+    it('should report start of ffmpeg process through \'start\' event',{timeout: 60000}, () => {
 
       var testFile = path.join(__dirname, 'assets', 'testStart.avi');
       var startCalled = false;
@@ -457,9 +445,9 @@ describe('Processor', () => {
             startCalled = true;
 
             // Only test a subset of command line
-            cmdline.indexOf('ffmpeg').should.equal(0);
-            cmdline.indexOf('testvideo-5m').should.not.equal(-1);
-            cmdline.indexOf('-b:a 128k').should.not.equal(-1);
+            expect(cmdline).toContain('ffmpeg');
+            expect(cmdline).toContain('testvideo-5m');
+            expect(cmdline).toContain('-b:a 128k');
           })
           .usingPreset('divx')
           .on('error', (err, stdout, stderr) => {
@@ -467,13 +455,12 @@ describe('Processor', () => {
             assert.ok(!err);
           })
           .on('end', () => {
-            startCalled.should.equal(true);
-            done();
+            expect(startCalled).toBe(true);
           })
           .saveToFile(testFile);
     });
 
-    it('should report output lines through \'stderr\' event',{timeout: 60000}, (done) => {
+    it('should report output lines through \'stderr\' event',{timeout: 60000}, () => {
 
       var testFile = path.join(__dirname, 'assets', 'testStderr.avi');
       var lines = [];
@@ -490,10 +477,9 @@ describe('Processor', () => {
             assert.ok(!err);
           })
           .on('end', () => {
-            lines.length.should.above(0);
-            lines[0].should.startWith('ffmpeg version');
-            lines.filter((l) => l.indexOf('Press [q]') === 0.).length.should.above(0);
-            done();
+            expect(lines.length).toBeGreaterThan(0);
+            expect(lines[0]).toMatch(/^ffmpeg version/);
+            expect(lines.filter((l) => l.indexOf('Press [q]') === 0)).toHaveLength(1);
           })
           .saveToFile(testFile);
     });
@@ -513,8 +499,8 @@ describe('Processor', () => {
             assert.ok(!err);
           })
           .on('end', (stdout, stderr) => {
-            stdout.split('\n').length.should.below(11);
-            stderr.split('\n').length.should.below(11);
+            expect(stdout.split('\n').length).toBeLessThan(11);
+            expect(stderr.split('\n').length).toBeLessThan(11);
             done();
           })
           .saveToFile(testFile);
@@ -522,11 +508,11 @@ describe('Processor', () => {
   });
 
   describe('takeScreenshots', () => {
-    function testScreenshots(title, name, config, files) {
-      it(title, {timeout: 60000}, (done) => {
+    function testScreenshots(title, name, config, inputFiles) {
+      it(title, {timeout: 60000}, () => {
         var filenamesCalled = false;
         var testFolder = path.join(__dirname, 'assets', 'screenshots_' + name);
-        files.forEach((file) => {
+        inputFiles.forEach((file) => {
           files.push(path.join(testFolder, file));
         });
         dirs.push(testFolder);
@@ -538,13 +524,13 @@ describe('Processor', () => {
           })
           .on('filenames', (filenames) => {
             filenamesCalled = true;
-            filenames.length.should.equal(files.length);
+            expect(filenames.length).toBe(files.length);
             filenames.forEach((file, index) => {
-              file.should.equal(files[index]);
+              expect(file).toBe(inputFiles[index]);
             });
           })
           .on('end', () => {
-            filenamesCalled.should.equal(true);
+            expect(filenamesCalled).toBe(true);
             fs.readdir(testFolder, (err, content) => {
               var tnCount = 0;
               content.forEach((file) => {
@@ -552,11 +538,10 @@ describe('Processor', () => {
                   tnCount++;
                 }
               });
-              tnCount.should.equal(files.length);
+              expect(tnCount).toBe(files.length);
               files.forEach((file) => {
-                content.indexOf(file).should.not.equal(-1);
+                expect(content).toContain(file);
               });
-              done();
             });
           })
           .takeScreenshots(config, testFolder);
@@ -687,8 +672,8 @@ describe('Processor', () => {
             fs.stat(testFile, (err, stats) => {
               assert.ok(!err && stats);
 
-              stats.size.should.above(0);
-              stats.isFile().should.equal(true);
+              expect(stats.size).toBeGreaterThan(0);
+              expect(stats.isFile()).toBe(true);
 
               done();
             });
@@ -697,23 +682,22 @@ describe('Processor', () => {
         .saveToFile(testFile);
     });
 
-    it('should save an output file with special characters properly to disk', (done) => {
+    it('should save an output file with special characters properly to disk', () => {
       var testFile = path.join(__dirname, 'assets', 'te[s]t video \' " .avi');
       files.push(testFile);
 
-      this.getCommand({ source: testfile, logger: testhelper.logger })
+      getCommand({ source: testfile, logger: testhelper.logger })
         .usingPreset('divx')
         .on('error', (err, stdout, stderr) => {
           testhelper.logError(err, stdout, stderr);
           assert.ok(!err);
         })
         .on('end', () => {
-          done();
         })
         .saveToFile(testFile);
     });
 
-    it('should save output files with special characters', (done) => {
+    it('should save output files with special characters', () => {
       var testFile = path.join(__dirname, 'assets', '[test "special \' char*cters \n.avi');
       files.push(testFile);
 
@@ -729,17 +713,15 @@ describe('Processor', () => {
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, (err, stats) => {
               assert.ok(!err && stats);
-              stats.size.should.above(0);
-              stats.isFile().should.equal(true);
-
-              done();
+              expect(stats.size).toBeGreaterThan(0);
+              expect(stats.isFile()).toBe(true);
             });
           });
         })
         .saveToFile(testFile);
     });
 
-    it('should accept a stream as its source', (done) => {
+    it('should accept a stream as its source', () => {
       var testFile = path.join(__dirname, 'assets', 'testConvertFromStreamToFile.avi');
       files.push(testFile);
 
@@ -756,17 +738,15 @@ describe('Processor', () => {
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, (err, stats) => {
               assert.ok(!err && stats);
-              stats.size.should.above(0);
-              stats.isFile().should.equal(true);
-
-              done();
+              expect(stats.size).toBeGreaterThan(0);
+              expect(stats.isFile()).toBe(true);
             });
           });
         })
         .saveToFile(testFile);
     });
 
-    it('should pass input stream errors through to error handler', (done) => {
+    it('should pass input stream errors through to error handler', () => {
       var testFile = path.join(__dirname, 'assets', 'testConvertFromStream.avi')
 
 		const readError = new Error('Read Error')
@@ -792,17 +772,16 @@ describe('Processor', () => {
             })
           })
           .on('error', (err, stdout, stderr) => {
-            this.saveOutput(stdout, stderr)
-            startCalled.should.be.true()
+            saveOutput(stdout, stderr)
+            expect(startCalled).toBe(true)
             assert.ok(err)
-            err.message.indexOf('Input stream error: ').should.equal(0)
-			   assert.strictEqual(err.inputStreamError, readError)
+            expect(err.message).toContain('Input stream error: ')
+            assert.strictEqual(err.inputStreamError, readError)
           })
           .on('end', (stdout, stderr) => {
             testhelper.logOutput(stdout, stderr)
             console.log('end was called, expected a error')
             assert.ok(false)
-            done()
           })
           .saveToFile(testFile)
     })
@@ -825,8 +804,8 @@ describe('Processor', () => {
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, (err, stats) => {
               assert.ok(!err && stats);
-              stats.size.should.above(0);
-              stats.isFile().should.equal(true);
+              expect(stats.size).toBeGreaterThan(0);
+              expect(stats.isFile()).toBe(true);
 
               done();
             });
@@ -861,8 +840,8 @@ describe('Processor', () => {
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, (err, stats) => {
               assert.ok(!err && stats);
-              stats.size.should.above(0);
-              stats.isFile().should.equal(true);
+              expect(stats.size).toBeGreaterThan(0);
+              expect(stats.isFile()).toBe(true);
 
               done();
             });
@@ -894,8 +873,8 @@ describe('Processor', () => {
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, (err, stats) => {
               assert.ok(!err && stats);
-              stats.size.should.above(0);
-              stats.isFile().should.equal(true);
+              expect(stats.size).toBeGreaterThan(0);
+              expect(stats.isFile()).toBe(true);
 
               done();
             });
@@ -928,8 +907,8 @@ describe('Processor', () => {
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, (err, stats) => {
               assert.ok(!err && stats);
-              stats.size.should.above(0);
-              stats.isFile().should.equal(true);
+              expect(stats.size).toBeGreaterThan(0);
+              expect(stats.isFile()).toBe(true);
 
               done();
             });
@@ -938,14 +917,14 @@ describe('Processor', () => {
 
       var passthrough = command.writeToStream({end: true});
 
-      passthrough.should.instanceof(PassThrough);
+      expect(passthrough).toBeInstanceOf(PassThrough)
       passthrough.pipe(outstream);
     });
 
     (process.version.match(/v0\.8\./) ? it : it.skip)('should throw an error when called with no arguments on node 0.8', () => {
-      (() => {
+      expect(() => {
         new FfmpegCommand().writeToStream({end: true});
-      }).should.throw(/PassThrough stream is not supported on node v0.8/);
+      }).toThrow(/PassThrough stream is not supported on node v0.8/);
     });
 
     it('should pass output stream errors through to error handler', (done) => {
@@ -970,24 +949,23 @@ describe('Processor', () => {
             })
           })
           .on('error', (err, stdout, stderr) => {
-            this.saveOutput(stdout, stderr)
-            startCalled.should.be.true()
+            saveOutput(stdout, stderr)
+            expect(startCalled).toBe(true)
             assert.ok(err)
-            err.message.indexOf('Output stream error: ').should.equal(0)
-			   assert.strictEqual(err.outputStreamError, writeError)
+            expect(err.message).toContain('Output stream error: ')
+            assert.strictEqual(err.outputStreamError, writeError)
           })
           .on('end', (stdout, stderr) => {
             console.log('end was called, expected a error')
             testhelper.logOutput(stdout, stderr)
             assert.ok(false)
-            done()
           })
           .writeToStream(outstream)
     })
   });
 
   describe('Outputs', () => {
-    it('should create multiple outputs', {timeout: 30000}, (done) => {
+    it('should create multiple outputs', {timeout: 30000}, () => {
 
       var testFile1 = path.join(__dirname, 'assets', 'testMultipleOutput1.avi');
       files.push(testFile1);
@@ -1021,8 +999,8 @@ describe('Processor', () => {
                 // check filesize to make sure conversion actually worked
                 fs.stat(file, (err, stats) => {
                   assert.ok(!err && stats);
-                  stats.size.should.above(0);
-                  stats.isFile().should.equal(true);
+                  expect(stats.size).toBeGreaterThan(0);
+                  expect(stats.isFile()).toBe(true);
 
                   cb(err);
                 });
@@ -1031,7 +1009,6 @@ describe('Processor', () => {
             (err) => {
               testhelper.logError(err);
               assert.ok(!err);
-              done();
             }
           );
         })
@@ -1040,7 +1017,7 @@ describe('Processor', () => {
   });
 
   describe('Inputs', () => {
-    it('should take input from a file with special characters', (done) => {
+    it('should take input from a file with special characters', () => {
       var testFile = path.join(__dirname, 'assets', 'testSpecialInput.avi');
       files.push(testFile);
 
@@ -1057,10 +1034,8 @@ describe('Processor', () => {
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, (err, stats) => {
               assert.ok(!err && stats);
-              stats.size.should.above(0);
-              stats.isFile().should.equal(true);
-
-              done();
+              expect(stats.size).toBeGreaterThan(0);
+              expect(stats.isFile()).toBe(true);
             });
           });
         })
@@ -1071,7 +1046,7 @@ describe('Processor', () => {
   describe.skip('Remote I/O', {timeout: 60000}, () => {
     var ffserver;
 
-    beforeAll((done) => {
+    beforeAll(() => {
       testhelper.logger.debug('spawning ffserver');
       ffserver = spawn(
         'ffserver',
@@ -1085,7 +1060,6 @@ describe('Processor', () => {
         if (!isready) {
           testhelper.logger.debug('ffserver is ready');
           isready = true;
-          done();
         }
       }
 
@@ -1103,16 +1077,20 @@ describe('Processor', () => {
 
     });
 
-    beforeEach((done) => {
-      setTimeout(done, 5000);
+    beforeEach(() => {
+      return new Promise((resolve) => {
+        setTimeout(resolve, 5000);
+      });
     });
 
-    afterAll((done) => {
+    afterAll(() => {
       ffserver.kill();
-      setTimeout(done, 1000);
+      return new Promise((resolve) => {
+        setTimeout(resolve, 1000);
+      });
     });
 
-    it('should take input from a RTSP stream', (done) => {
+    it('should take input from a RTSP stream', () => {
       var testFile = path.join(__dirname, 'assets', 'testRTSPInput.avi');
       files.push(testFile);
 
@@ -1130,17 +1108,16 @@ describe('Processor', () => {
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, (err, stats) => {
               assert.ok(!err && stats);
-              stats.size.should.above(0);
-              stats.isFile().should.equal(true);
+              expect(stats.size).toBeGreaterThan(0);
+              expect(stats.isFile()).toBe(true);
 
-              done();
             });
           });
         })
         .saveToFile(testFile);
     });
 
-    it('should take input from an URL', (done) => {
+    it('should take input from an URL', () => {
       var testFile = path.join(__dirname, 'assets', 'testURLInput.avi');
       files.push(testFile);
 
@@ -1158,17 +1135,15 @@ describe('Processor', () => {
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, (err, stats) => {
               assert.ok(!err && stats);
-              stats.size.should.above(0);
-              stats.isFile().should.equal(true);
-
-              done();
+              expect(stats.size).toBeGreaterThan(0);
+              expect(stats.isFile()).toBe(true);
             });
           });
         })
         .saveToFile(testFile);
     });
 
-    it('should output to a RTP stream', (done) => {
+    it('should output to a RTP stream', () => {
       getCommand({ source: testfilebig, logger: testhelper.logger })
         .videoCodec('libx264')
         .audioCodec('copy')
@@ -1177,19 +1152,18 @@ describe('Processor', () => {
           assert.ok(!err);
         })
         .on('end', () => {
-          done();
         })
         .save(testRTPOut);
     });
   });
 
   describe('Errors', () => {
-    it('should report an error when ffmpeg has been killed',{timeout: 10000}, (done) => {
+    it('should report an error when ffmpeg has been killed',{timeout: 10000}, () => {
 
       var testFile = path.join(__dirname, 'assets', 'testErrorKill.avi');
       files.push(testFile);
 
-      var command = getCommand({ source: this.testfilebig, logger: testhelper.logger });
+      var command = getCommand({ source: testfilebig, logger: testhelper.logger });
 
       command
         .usingPreset('divx')
@@ -1199,8 +1173,7 @@ describe('Processor', () => {
           }, 200);
         })
         .on('error', (err) => {
-          err.message.should.match(/ffmpeg was killed with signal SIGKILL/);
-          done();
+          expect(err.message).toMatch(/ffmpeg was killed with signal SIGKILL/);
         })
         .on('end', () => {
           assert.ok(false);
@@ -1208,12 +1181,11 @@ describe('Processor', () => {
         .saveToFile(testFile);
     });
 
-    it('should report ffmpeg errors', (done) => {
-      getCommand({ source: this.testfilebig, logger: testhelper.logger })
+    it('should report ffmpeg errors', () => {
+      getCommand({ source: testfilebig, logger: testhelper.logger })
         .addOption('-invalidoption')
         .on('error', (err) => {
-          setTimeout(done, 1000);
-          err.message.should.match(/Unrecognized option 'invalidoption'/);
+          expect(err.message).toMatch(/Unrecognized option 'invalidoption'/);
         })
         .saveToFile('/will/not/be/created/anyway');
     });
