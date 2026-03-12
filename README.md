@@ -1,6 +1,6 @@
 # Fluent ffmpeg-API for node.js
 
-![NPM Version](https://img.shields.io/npm/v/%40gumlet%2Ffluent-ffmpeg)
+[![NPM Version](https://img.shields.io/npm/v/%40gumlet%2Ffluent-ffmpeg)](https://www.npmjs.com/package/@gumlet/fluent-ffmpeg)
 [![Coverage Status](https://coveralls.io/repos/github/gumlet/node-fluent-ffmpeg/badge.svg?branch=master)](https://coveralls.io/github/gumlet/node-fluent-ffmpeg?branch=master)
 
 ## About

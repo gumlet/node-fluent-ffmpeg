@@ -6,7 +6,6 @@ import Ffmpeg from '../index.js';
 import path from 'node:path';
 import { strict as assert } from 'node:assert';
 import testhelper from './helpers.js';
-import async from 'async';
 import { platform } from 'node:os';
 
 // delimiter fallback for node 0.8
@@ -135,120 +134,110 @@ describe('Capabilities', () => {
       })
     });
 
-    it('should enable checking command arguments for available codecs, formats and encoders', () => {
-      return new Promise((resolve, reject) => {
-        async.waterfall([
-          // Check with everything available
-          (cb) => {
-            new Ffmpeg('/path/to/file.avi')
-              .fromFormat('avi')
-              .audioCodec('pcm_u16le')
-              .videoCodec('png')
-              .toFormat('mp4')
-              ._checkCapabilities(cb);
-          },
-
-          // Invalid input format
-          (cb) => {
-            new Ffmpeg('/path/to/file.avi')
-              .fromFormat('invalid-input-format')
-              .audioCodec('pcm_u16le')
-              .videoCodec('png')
-              .toFormat('mp4')
-              ._checkCapabilities((err) => {
-                assert.ok(!!err);
-                expect(err.message).toMatch(/Input format invalid-input-format is not available/);
-
-                cb();
-              });
-          },
-
-          // Invalid output format
-          (cb) => {
-            new Ffmpeg('/path/to/file.avi')
-              .fromFormat('avi')
-              .audioCodec('pcm_u16le')
-              .videoCodec('png')
-              .toFormat('invalid-output-format')
-              ._checkCapabilities((err) => {
-                assert.ok(!!err);
-                expect(err.message).toMatch(/Output format invalid-output-format is not available/);
-
-                cb();
-              });
-          },
-
-          // Invalid audio codec
-          (cb) => {
-            new Ffmpeg('/path/to/file.avi')
-              .fromFormat('avi')
-              .audioCodec('invalid-audio-codec')
-              .videoCodec('png')
-              .toFormat('mp4')
-              ._checkCapabilities((err) => {
-                assert.ok(!!err);
-                expect(err.message).toMatch(/Audio codec invalid-audio-codec is not available/);
-
-                cb();
-              });
-          },
-
-          // Invalid video codec
-          (cb) => {
-            new Ffmpeg('/path/to/file.avi')
-              .fromFormat('avi')
-              .audioCodec('pcm_u16le')
-              .videoCodec('invalid-video-codec')
-              .toFormat('mp4')
-              ._checkCapabilities((err) => {
-                assert.ok(!!err);
-                expect(err.message).toMatch(/Video codec invalid-video-codec is not available/);
-
-                cb();
-              });
-          },
-
-          // Invalid audio encoder
-          (cb) => {
-            new Ffmpeg('/path/to/file.avi')
-              .fromFormat('avi')
-              // Valid codec, but not a valid encoder for audio
-              .audioCodec('png')
-              .videoCodec('png')
-              .toFormat('mp4')
-              ._checkCapabilities((err) => {
-                assert.ok(!!err);
-                expect(err.message).toMatch(/Audio codec png is not available/);
-
-                cb();
-              });
-          },
-
-          // Invalid video encoder
-          (cb) => {
-            new Ffmpeg('/path/to/file.avi')
-              .fromFormat('avi')
-              .audioCodec('pcm_u16le')
-              // Valid codec, but not a valid encoder for video
-              .videoCodec('pcm_u16le')
-              .toFormat('mp4')
-              ._checkCapabilities((err) => {
-                assert.ok(!!err);
-                expect(err.message).toMatch(/Video codec pcm_u16le is not available/);
-
-                cb();
-              });
-          }
-        ], (err) => {
-          testhelper.logError(err);
-          assert.ok(!err);
-          resolve()
-        });
+    it('should enable checking command arguments for available codecs, formats and encoders', async () => {
+      await new Promise(resolve => {
+        new Ffmpeg('/path/to/file.avi')
+          .fromFormat('avi')
+          .audioCodec('pcm_u16le')
+          .videoCodec('png')
+          .toFormat('mp4')
+          ._checkCapabilities(() => {
+            resolve()
+          });
       })
+
+      await new Promise(resolve => {
+        new Ffmpeg('/path/to/file.avi')
+          .fromFormat('invalid-input-format')
+          .audioCodec('pcm_u16le')
+          .videoCodec('png')
+          .toFormat('mp4')
+          ._checkCapabilities((err) => {
+            assert.ok(!!err);
+            expect(err.message).toMatch(/Input format invalid-input-format is not available/);
+
+            resolve()
+          });
+      })
+
+      await new Promise(resolve => {
+        new Ffmpeg('/path/to/file.avi')
+          .fromFormat('avi')
+          .audioCodec('pcm_u16le')
+          .videoCodec('png')
+          .toFormat('invalid-output-format')
+          ._checkCapabilities((err) => {
+            assert.ok(!!err);
+            expect(err.message).toMatch(/Output format invalid-output-format is not available/);
+
+            resolve()
+          });
+      })
+
+
+      await new Promise(resolve => {
+        new Ffmpeg('/path/to/file.avi')
+          .fromFormat('avi')
+          .audioCodec('invalid-audio-codec')
+          .videoCodec('png')
+          .toFormat('mp4')
+          ._checkCapabilities((err) => {
+            assert.ok(!!err);
+            expect(err.message).toMatch(/Audio codec invalid-audio-codec is not available/);
+
+            resolve()
+          });
+      })
+
+      await new Promise(resolve => {
+        new Ffmpeg('/path/to/file.avi')
+          .fromFormat('avi')
+          .audioCodec('pcm_u16le')
+          .videoCodec('invalid-video-codec')
+          .toFormat('mp4')
+          ._checkCapabilities((err) => {
+            assert.ok(!!err);
+            expect(err.message).toMatch(/Video codec invalid-video-codec is not available/);
+
+            resolve()
+          });
+      })
+
+
+      await new Promise(resolve => {
+        new Ffmpeg('/path/to/file.avi')
+          .fromFormat('avi')
+          // Valid codec, but not a valid encoder for audio
+          .audioCodec('png')
+          .videoCodec('png')
+          .toFormat('mp4')
+          ._checkCapabilities((err) => {
+            assert.ok(!!err);
+            expect(err.message).toMatch(/Audio codec png is not available/);
+
+            resolve()
+          });
+      })
+
+      await new Promise(resolve => {
+        new Ffmpeg('/path/to/file.avi')
+          .fromFormat('avi')
+          .audioCodec('pcm_u16le')
+          // Valid codec, but not a valid encoder for video
+          .videoCodec('pcm_u16le')
+          .toFormat('mp4')
+          ._checkCapabilities((err) => {
+            assert.ok(!!err);
+            expect(err.message).toMatch(/Video codec pcm_u16le is not available/);
+
+            resolve()
+          });
+      })
+
     });
 
     it('should check capabilities before running a command', () => {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         new Ffmpeg('/path/to/file.avi')
           .on('error', (err) => {
             expect(err.message).toMatch(/Output format invalid-output-format is not available/);
