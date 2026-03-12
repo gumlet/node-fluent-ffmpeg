@@ -33,7 +33,6 @@
     "vitest": "^4.0.18"
   },
   "dependencies": {
-    "async": "^3.2.0",
     "which": "^6.0.0"
   },
   "engines": {
