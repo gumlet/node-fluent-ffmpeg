@@ -1,6 +1,6 @@
 {
   "name": "@gumlet/fluent-ffmpeg",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A fluent API to FFMPEG (http://www.ffmpeg.org)",
   "keywords": [
     "ffmpeg"
